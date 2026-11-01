@@ -1,0 +1,23 @@
+{
+  "name": "google-serp-scanner-windows",
+  "version": "1.0.0",
+  "description": "Google Search SERP Page 1 Multi-Device Scanner for Windows (Desktop, Mobile, Tablet) with Ads, Organic, Maps, AI Overview tagging and Excel export.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0"
+  },
+  "keywords": [
+    "google-serp",
+    "serp-scanner",
+    "seo-rank-tracker",
+    "google-ads-scraper",
+    "google-maps-scraper",
+    "windows"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

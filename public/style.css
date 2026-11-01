@@ -1,0 +1,128 @@
+/* Custom styles for Google SERP Scanner */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.7);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.9);
+}
+
+/* Category Badges */
+.badge-ads {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-organic {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-maps {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-ai {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.badge-paa {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Device Badges */
+.badge-desktop {
+  background-color: rgba(51, 65, 85, 0.6);
+  color: #e2e8f0;
+}
+
+.badge-mobile {
+  background-color: rgba(30, 58, 138, 0.4);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge-tablet {
+  background-color: rgba(67, 56, 202, 0.4);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Pulse indicator animation */
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+}
+
+.status-pulse {
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+/* Table Hover Effect */
+#resultsTableBody tr:hover {
+  background-color: rgba(30, 41, 59, 0.7);
+}
+
+/* Category filter buttons active state */
+.cat-pill.active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Checkbox indicator toggle (device cards) */
+.device-checkbox:checked+span+span+span+.check-indicator {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+/* Click Ads: pulse animation on badge when active */
+#clickInfoBadge:not(.hidden) {
+  animation: pulseGlow 2.4s infinite ease-in-out;
+}
+
+/* Click Ads options panel smooth reveal */
+#clickAdsOptions {
+  transition: max-height 0.25s ease-in-out, opacity 0.25s ease-in-out;
+}
+
+/* Amber focus ring for own-domains input */
+#ownDomainsInput:focus {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+/* Terminal log scroll */
+#logContainer {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(71, 85, 105, 0.7) rgba(15, 23, 42, 0.6);
+}
