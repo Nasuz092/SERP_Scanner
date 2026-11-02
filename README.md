@@ -170,3 +170,4 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /win32ico
 ## Lisensi
 
 Hak Cipta (c) 2026. Seluruh hak cipta dilindungi undang-undang. Dirilis di bawah Lisensi MIT.
+
