@@ -124,18 +124,22 @@ export async function extractSerpData(page, keyword, deviceType) {
       // VALIDASI KETAT: Jangan tampilkan jika tidak ada judul / URL
       if (!heading && !finalUrl && !domain) return;
 
-      const placement = (container.closest('#bottomads') || container.getBoundingClientRect().top > window.innerHeight / 1.5)
-        ? 'Bottom Ad (Sponsor Bawah)' : 'Top Ad (Sponsor Atas)';
+      const isBottom = Boolean(container.closest('#bottomads') || container.getBoundingClientRect().top > window.innerHeight / 1.5);
+      const placement = isBottom ? 'Bottom Ad (Sponsor Bawah)' : 'Top Ad (Sponsor Atas)';
+      const adId = adRank++;
 
       items.push({
         keyword, device: deviceType, overallOrder: overallOrder++, category: 'ADS',
-        placement: placement, rank: adRank++,
+        adId: adId,
+        placement: placement, rank: adId,
         title: heading ? heading.textContent.trim() : (domain || 'Iklan Google'),
         domain: domain || 'Iklan',
-        url: finalUrl, // Jika kosong, UI akan handle
+        rawHref: link.href,
+        url: finalUrl,
         snippet: snippet ? snippet.textContent.trim() : '',
         sitelinks: [],
-        extra: 'Iklan Google Ads'
+        extra: 'Iklan Google Ads',
+        isBottom: isBottom
       });
     });
 
@@ -263,91 +267,145 @@ function normalizeDomain(d) {
   return String(d || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
 }
 
-export async function clickDetectedAds(page, options = {}) {
-  const ownDomains = (Array.isArray(options.ownDomains) && options.ownDomains.length ? options.ownDomains : ['mesinprinting.id']).map(normalizeDomain).filter(Boolean);
+export async function clickDetectedAds(page, adItems = [], options = {}) {
+  const ownDomains = (Array.isArray(options.ownDomains) && options.ownDomains.length ? options.ownDomains : ['mesinprinting.id'])
+    .map(normalizeDomain)
+    .filter(Boolean);
+  const targetAds = (Array.isArray(options.targetAds) ? options.targetAds : [])
+    .map(normalizeDomain)
+    .filter(Boolean);
+  const targetOnly = options.targetOnly === true;
   const clickBottomAds = options.clickBottomAds === true;
-  const maxClicks = Math.max(1, Number(options.maxClicks) || 1);
+  const maxClicks = Math.max(1, Number(options.maxClicks) || 3);
   const clickDelayMs = Math.max(500, Number(options.clickDelayMs) || 1000);
 
-  const result = { clicked: [], skipped: [], foundAds: 0 };
+  const result = { clicked: [], skipped: [], foundAds: adItems.length };
+  const classifiedAds = [];
 
-  const adAnchors = await page.evaluate((ownDomains) => {
-    function isOwn(text) { return ownDomains.some(d => text.toLowerCase().includes(d)); }
-    const results = [];
-    document.querySelectorAll('a[href*="/aclk?"], a[href*="googleadservices"]').forEach(a => {
-      let cite = '';
-      const container = a.closest('div.MjjYud, div.g, div[data-hveid], #tads > div, #bottomads > div');
-      if (container) {
-        const citeEl = container.querySelector('cite');
-        if (citeEl) cite = citeEl.innerText;
+  for (const ad of adItems) {
+    const rawHref = (ad.rawHref || ad.url || '').toLowerCase();
+    const domain = (ad.domain || '').toLowerCase();
+    const url = (ad.url || '').toLowerCase();
+    const title = (ad.title || '').toLowerCase();
+
+    // 1. Cek apakah ini domain sendiri yang dilindungi (Blacklist)
+    let matchedOwn = null;
+    const isOwn = ownDomains.some(own => {
+      const d = own.toLowerCase().trim();
+      if (!d) return false;
+      if (domain.includes(d) || url.includes(d) || rawHref.includes(d) || title.includes(d)) {
+        matchedOwn = d;
+        return true;
       }
-      const href = a.href || '';
-      const text = a.innerText || '';
-      const isBottom = a.closest('#bottomads') !== null || a.getBoundingClientRect().top > window.innerHeight / 1.5;
-
-      a.setAttribute('data-serp-ad-click', 'true');
-      results.push({
-        title: text.trim().substring(0, 100) || 'Iklan',
-        cite: cite.trim(), href: href, isBottom: isBottom,
-        isOwn: isOwn(text) || isOwn(href) || isOwn(cite)
-      });
+      return false;
     });
-    return results;
-  }, ownDomains);
 
-  result.foundAds = adAnchors.length;
-  const handles = await page.$$('[data-serp-ad-click="true"]');
-  const eligible = [];
-
-  for (let i = 0; i < handles.length; i++) {
-    const info = adAnchors[i];
-    if (!info) continue;
-    const data = { handle: handles[i], ...info };
-
-    if (info.isOwn) {
-      result.skipped.push({ placement: info.isBottom ? 'Bottom' : 'Top', title: info.title, cite: info.cite, reason: 'own-domain' });
-    } else if (info.isBottom && !clickBottomAds) {
-      result.skipped.push({ placement: 'Bottom', title: info.title, cite: info.cite, reason: 'bottom-ads-disabled' });
-    } else {
-      eligible.push(data);
+    if (isOwn) {
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        matchedDomain: matchedOwn,
+        placement: ad.placement,
+        reason: 'own-domain'
+      });
+      continue;
     }
+
+    // 2. Cek apakah ini iklan target khusus yang ditentukan (Whitelist)
+    let matchedTarget = null;
+    let isTarget = false;
+    if (targetAds.length > 0) {
+      isTarget = targetAds.some(tgt => {
+        const t = tgt.toLowerCase().trim();
+        if (!t) return false;
+        if (domain.includes(t) || url.includes(t) || rawHref.includes(t) || title.includes(t)) {
+          matchedTarget = t;
+          return true;
+        }
+        return false;
+      });
+    }
+
+    // 3. Jika mode target-only aktif dan iklan ini bukan target, lewati
+    if (targetOnly && targetAds.length > 0 && !isTarget) {
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        placement: ad.placement,
+        reason: 'not-in-target-list'
+      });
+      continue;
+    }
+
+    // 4. Cek sponsor bawah
+    if (ad.isBottom && !clickBottomAds) {
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        placement: ad.placement,
+        reason: 'bottom-ads-disabled'
+      });
+      continue;
+    }
+
+    classifiedAds.push({
+      ad,
+      isTarget,
+      matchedTarget
+    });
   }
 
-  const toClick = eligible.slice(0, maxClicks);
+  // Prioritaskan iklan target di paling atas agar selalu diklik pertama!
+  classifiedAds.sort((a, b) => (b.isTarget ? 1 : 0) - (a.isTarget ? 1 : 0));
 
-  for (const cand of toClick) {
+  let clickedCount = 0;
+  for (const item of classifiedAds) {
+    const { ad, isTarget, matchedTarget } = item;
+    if (clickedCount >= maxClicks) {
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        placement: ad.placement,
+        reason: 'over-max-clicks'
+      });
+      continue;
+    }
+
+    const rawHref = ad.rawHref || ad.url || '';
     try {
-      await page.waitForTimeout(clickDelayMs + Math.floor(Math.random() * 700));
-      let popup = null;
+      await page.waitForTimeout(clickDelayMs + Math.floor(Math.random() * 500));
+      const newPage = await page.context().newPage();
       try {
-        const popupPromise = page.context().waitForEvent('page', { timeout: 8000 }).catch(() => null);
-        await cand.handle.click({ modifiers: ['Control'] });
-        popup = await popupPromise;
-      } catch (e) {
-        try { await cand.handle.click(); } catch (e2) { throw new Error('click failed: ' + e2.message); }
-      }
+        await newPage.goto(rawHref, { waitUntil: 'domcontentloaded', timeout: 25000 });
+      } catch (navErr) { }
+      const dwell = 2500 + Math.floor(Math.random() * 2000);
+      await newPage.waitForTimeout(dwell);
+      await newPage.close().catch(() => {});
 
-      if (popup) {
-        await popup.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => { });
-        const dwell = 2000 + Math.floor(Math.random() * 2000);
-        await popup.waitForTimeout(dwell);
-        await popup.close().catch(() => { });
-        result.clicked.push({ placement: cand.isBottom ? 'Bottom' : 'Top', title: cand.title, cite: cand.cite, method: 'new-tab', dwellMs: dwell });
-      } else {
-        await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => { });
-        const dwell = 2000 + Math.floor(Math.random() * 2000);
-        await page.waitForTimeout(dwell);
-        result.clicked.push({ placement: cand.isBottom ? 'Bottom' : 'Top', title: cand.title, cite: cand.cite, method: 'same-tab', dwellMs: dwell });
-        await page.goBack({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => { });
-        await page.waitForTimeout(1000);
-      }
+      result.clicked.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        isTarget: isTarget,
+        matchedTarget: matchedTarget,
+        placement: ad.placement,
+        method: 'new-tab',
+        dwellMs: dwell
+      });
+      clickedCount++;
     } catch (err) {
-      result.skipped.push({ placement: 'Ad', title: cand.title, cite: cand.cite, reason: `click-error` });
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        placement: ad.placement,
+        reason: 'click-error: ' + err.message
+      });
     }
-  }
-
-  for (const cand of eligible.slice(maxClicks)) {
-    result.skipped.push({ placement: 'Ad', title: cand.title, cite: cand.cite, reason: 'over-max-clicks' });
   }
 
   return result;
@@ -405,36 +463,59 @@ export async function scanKeywordOnDevice(browser, keyword, deviceKey, options =
     const items = await extractSerpData(page, keyword, profile.id);
     items.forEach(it => { it.screenshot = screenshotUrl; });
 
+    const adItems = items.filter(it => it.category === 'ADS');
     let clickSummary = null;
-    if (options.clickAds === true && items.length > 0) {
+    if (options.clickAds === true && adItems.length > 0) {
       try {
-        clickSummary = await clickDetectedAds(page, {
+        clickSummary = await clickDetectedAds(page, adItems, {
           ownDomains: options.ownDomains,
+          targetAds: options.targetAds,
+          targetOnly: options.targetOnly === true,
           clickBottomAds: options.clickBottomAds === true,
-          maxClicks: options.maxClicks || 1,
+          maxClicks: options.maxClicks || 3,
           clickDelayMs: options.clickDelayMs || 1000
         });
       } catch (err) {
-        clickSummary = { clicked: [], skipped: [], error: err.message, foundAds: 0 };
+        clickSummary = { clicked: [], skipped: [], error: err.message, foundAds: adItems.length };
       }
     }
 
     items.forEach(it => {
       if (it.category === 'ADS') {
-        if (clickSummary && clickSummary.clicked.length > 0) {
-          const matchClicked = clickSummary.clicked.find(c => (c.title && it.title.includes(c.title)) || (c.cite && it.domain.includes(c.cite)));
-          if (matchClicked) {
-            it.isClicked = true; it.clickStatus = 'CLICKED'; it.clickDetails = `Berhasil diklik (${matchClicked.method})`; return;
-          }
+        const foundClicked = clickSummary?.clicked?.find(c => c.adId === it.adId);
+        if (foundClicked) {
+          it.isClicked = true;
+          it.isTarget = !!foundClicked.isTarget;
+          it.clickStatus = 'CLICKED';
+          it.clickDetails = foundClicked.isTarget
+            ? `Target Utama Berhasil Diklik (Target: ${foundClicked.matchedTarget || it.domain})`
+            : `Berhasil diklik (${foundClicked.method})`;
+          return;
         }
-        if (clickSummary && clickSummary.skipped.length > 0) {
-          const matchSkipped = clickSummary.skipped.find(s => (s.title && it.title.includes(s.title)) || (s.cite && it.domain.includes(s.cite)));
-          if (matchSkipped) {
-            it.isClicked = false; it.clickStatus = matchSkipped.reason === 'own-domain' ? 'SKIPPED_OWN_DOMAIN' : 'SKIPPED';
-            it.clickDetails = matchSkipped.reason === 'own-domain' ? `Dilewati (Domain Sendiri)` : `Dilewati (${matchSkipped.reason})`; return;
+        const foundSkipped = clickSummary?.skipped?.find(s => s.adId === it.adId);
+        if (foundSkipped) {
+          it.isClicked = false;
+          if (foundSkipped.reason === 'own-domain') {
+            it.clickStatus = 'SKIPPED_OWN_DOMAIN';
+            it.clickDetails = `Dilewati (Domain Sendiri: ${foundSkipped.matchedDomain || 'Terproteksi'})`;
+          } else if (foundSkipped.reason === 'not-in-target-list') {
+            it.clickStatus = 'SKIPPED_NOT_TARGET';
+            it.clickDetails = 'Dilewati (Bukan target yang di-whitelist)';
+          } else if (foundSkipped.reason === 'bottom-ads-disabled') {
+            it.clickStatus = 'SKIPPED_BOTTOM_DISABLED';
+            it.clickDetails = 'Dilewati (Opsi sponsor bawah nonaktif)';
+          } else if (foundSkipped.reason === 'over-max-clicks') {
+            it.clickStatus = 'SKIPPED_LIMIT';
+            it.clickDetails = 'Dilewati (Batas kuota klik per keyword)';
+          } else {
+            it.clickStatus = 'SKIPPED';
+            it.clickDetails = `Dilewati (${foundSkipped.reason})`;
           }
+          return;
         }
-        it.isClicked = false; it.clickStatus = 'SKIPPED_LIMIT'; it.clickDetails = `Dilewati (Limit klik)`;
+        it.isClicked = false;
+        it.clickStatus = options.clickAds ? 'SKIPPED' : 'DISABLED';
+        it.clickDetails = options.clickAds ? 'Dilewati' : 'Fitur klik iklan nonaktif';
       }
     });
 

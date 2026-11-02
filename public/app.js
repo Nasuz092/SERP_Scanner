@@ -29,6 +29,8 @@
   const clickAdsCheckbox = document.getElementById('clickAdsCheckbox');
   const clickAdsOptions = document.getElementById('clickAdsOptions');
   const ownDomainsInput = document.getElementById('ownDomainsInput');
+  const targetAdsInput = document.getElementById('targetAdsInput');
+  const targetOnlyCheckbox = document.getElementById('targetOnlyCheckbox');
   const clickBottomAdsCheckbox = document.getElementById('clickBottomAdsCheckbox');
   const maxClicksInput = document.getElementById('maxClicksInput');
   const clickInfoBadge = document.getElementById('clickInfoBadge');
@@ -85,9 +87,9 @@
   function toggleClickAdsOptions() {
     if (!clickAdsCheckbox || !clickAdsOptions) return;
     if (clickAdsCheckbox.checked) {
-      clickAdsOptions.classList.remove('hidden');
+      clickAdsOptions.classList.remove('hidden'); clickAdsOptions.style.display = 'block';
     } else {
-      clickAdsOptions.classList.add('hidden');
+      clickAdsOptions.classList.add('hidden'); clickAdsOptions.style.display = 'none';
     }
   }
   if (clickAdsCheckbox) {
@@ -98,6 +100,15 @@
   function getOwnDomains() {
     if (!ownDomainsInput) return [];
     return ownDomainsInput.value
+      .split(',')
+      .map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
+      .filter(Boolean);
+  }
+
+  // Parse targetAds input into array
+  function getTargetAds() {
+    if (!targetAdsInput) return [];
+    return targetAdsInput.value
       .split(',')
       .map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
       .filter(Boolean);
@@ -321,6 +332,63 @@
     }
   }
 
+  function renderAdClickStatus(item) {
+    if (item.category !== 'ADS') return '';
+    if (item.isClicked) {
+      const isTarget = item.isTarget || (item.clickDetails && item.clickDetails.includes('Target'));
+      return `
+        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
+          <div class="p-2 rounded-lg ${isTarget ? 'bg-amber-950/80 border border-amber-500 text-amber-200' : 'bg-emerald-950/70 border border-emerald-600/70 text-emerald-300'}">
+            <div class="flex items-center gap-1.5 font-bold text-[11px]">
+              <span>${isTarget ? '🎯 IKLAN TARGET UTAMA BERHASIL DIKLIK' : '🖱️ IKLAN KOMPETITOR BERHASIL DIKLIK'}</span>
+            </div>
+            <span class="text-[10px] ${isTarget ? 'text-amber-300' : 'text-emerald-400'} block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
+          </div>
+        </div>
+      `;
+    }
+    if (item.clickStatus === 'SKIPPED_OWN_DOMAIN') {
+      return `
+        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
+          <div class="p-2 rounded-lg bg-blue-950/70 border border-blue-600/70 text-blue-300">
+            <div class="flex items-center gap-1.5 font-bold text-[11px]">
+              <span>🛡️ DILEWATI (DOMAIN SENDIRI)</span>
+            </div>
+            <span class="text-[10px] text-blue-400 block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
+          </div>
+        </div>
+      `;
+    }
+    if (item.clickStatus === 'SKIPPED_BOTTOM_DISABLED') {
+      return `
+        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
+          <div class="p-2 rounded-lg bg-amber-950/40 border border-amber-700/50 text-amber-300">
+            <div class="flex items-center gap-1.5 font-semibold text-[11px]">
+              <span>ℹ️ Sponsor Bawah (Belum Diklik)</span>
+            </div>
+            <span class="text-[10px] text-amber-400/80 block mt-0.5">Iklan ini dilewati karena opsi 'Klik iklan bawah' belum dicentang di panel kiri.</span>
+          </div>
+        </div>
+      `;
+    }
+    if (item.clickStatus === 'SKIPPED_LIMIT') {
+      return `
+        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
+          <div class="p-1.5 rounded bg-slate-800 border border-slate-700 text-slate-400 text-[10px]">
+            <span>⚠️ Dilewati (melebihi batas maksimal klik per keyword)</span>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="mt-2 pt-1.5 border-t border-slate-700/60">
+        <div class="text-[10px] text-slate-500 font-mono mt-1">
+          <span>⚪ Mode klik iklan dinonaktifkan</span>
+        </div>
+      </div>
+    `;
+  }
+
   // Render Table Rows
   function renderTable() {
     let filtered = allResults;
@@ -477,40 +545,7 @@
                 ${sitelinksHtml}
               `}
 
-              ${item.category === 'ADS' ? `
-                <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-                  ${item.isClicked ? `
-                    <div class="p-2 rounded-lg bg-emerald-950/70 border border-emerald-600/70 text-emerald-300">
-                      <div class="flex items-center gap-1.5 font-bold text-[11px]">
-                        <span>🖱️ IKLAN BERHASIL DIKLIK OTOMATIS</span>
-                      </div>
-                      <span class="text-[10px] text-emerald-400 block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
-                    </div>
-                  ` : (item.clickStatus === 'SKIPPED_OWN_DOMAIN' ? `
-                    <div class="p-2 rounded-lg bg-blue-950/70 border border-blue-600/70 text-blue-300">
-                      <div class="flex items-center gap-1.5 font-bold text-[11px]">
-                        <span>🛡️ DILEWATI (DOMAIN SENDIRI)</span>
-                      </div>
-                      <span class="text-[10px] text-blue-400 block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
-                    </div>
-                  ` : (item.clickStatus === 'SKIPPED_BOTTOM_DISABLED' ? `
-                    <div class="p-2 rounded-lg bg-amber-950/40 border border-amber-700/50 text-amber-300">
-                      <div class="flex items-center gap-1.5 font-semibold text-[11px]">
-                        <span>ℹ️ Sponsor Bawah (Belum Diklik)</span>
-                      </div>
-                      <span class="text-[10px] text-amber-400/80 block mt-0.5">Iklan ini dilewati karena opsi 'Klik iklan bawah' belum dicentang di panel kiri.</span>
-                    </div>
-                  ` : (item.clickStatus === 'SKIPPED_LIMIT' ? `
-                    <div class="p-1.5 rounded bg-slate-800 border border-slate-700 text-slate-400 text-[10px]">
-                      <span>⚠️ Dilewati (melebihi batas maksimal klik per keyword)</span>
-                    </div>
-                  ` : `
-                    <div class="text-[10px] text-slate-500 font-mono mt-1">
-                      <span>⚪ Mode klik iklan dinonaktifkan</span>
-                    </div>
-                  )))}
-                </div>
-              ` : ''}
+              ${renderAdClickStatus(item)}
             </div>
           </td>
 
@@ -571,8 +606,10 @@
     // Click ads options
     const clickAds = clickAdsCheckbox && clickAdsCheckbox.checked;
     const ownDomains = getOwnDomains();
+    const targetAds = getTargetAds();
+    const targetOnly = targetOnlyCheckbox && targetOnlyCheckbox.checked;
     const clickBottomAds = clickBottomAdsCheckbox && clickBottomAdsCheckbox.checked;
-    const maxClicksPerKeyword = Math.max(1, Math.min(3, Number(maxClicksInput && maxClicksInput.value) || 1));
+    const maxClicksPerKeyword = Math.max(1, Math.min(10, Number(maxClicksInput && maxClicksInput.value) || 3));
 
     if (clickAds) {
       const confirmed = confirm(
@@ -604,6 +641,8 @@
           clearPrevious: true,
           clickAds,
           ownDomains,
+          targetAds,
+          targetOnly,
           clickBottomAds,
           maxClicksPerKeyword
         })
@@ -726,6 +765,12 @@
         if (clickAdsOptions) clickAdsOptions.classList.remove('hidden');
         if (Array.isArray(data.clickInfo.ownDomains) && ownDomainsInput) {
           ownDomainsInput.value = data.clickInfo.ownDomains.join(', ');
+        }
+        if (Array.isArray(data.clickInfo.targetAds) && targetAdsInput) {
+          targetAdsInput.value = data.clickInfo.targetAds.join(', ');
+        }
+        if (targetOnlyCheckbox && data.clickInfo.targetOnly !== undefined) {
+          targetOnlyCheckbox.checked = !!data.clickInfo.targetOnly;
         }
         if (clickBottomAdsCheckbox) clickBottomAdsCheckbox.checked = !!data.clickInfo.clickBottomAds;
         if (maxClicksInput && data.clickInfo.maxClicksPerKeyword) {

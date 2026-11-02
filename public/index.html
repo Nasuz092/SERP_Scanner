@@ -218,24 +218,49 @@
             ⚠️ Iklan dari domain sendiri akan otomatis dilewati. Gunakan hanya untuk riset/QA iklan Anda.
           </p>
 
-          <div id="clickAdsOptions" class="hidden space-y-2 pl-6 pt-1">
-            <label for="ownDomainsInput" class="block text-[11px] text-slate-400 font-medium">
-              Domain yang TIDAK boleh diklik (pisahkan dengan koma):
-            </label>
-            <input type="text" id="ownDomainsInput"
-              value="mesinprinting.id, anugrahsupplymandiri.com, anugrahsupplymandiri.co.id"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
+          <div id="clickAdsOptions" class="hidden space-y-3 pl-6 pt-1">
+            <!-- Domain Sendiri (Blacklist) -->
+            <div>
+              <label for="ownDomainsInput" class="block text-[11px] text-blue-300 font-semibold mb-1 flex items-center gap-1">
+                <span>🛡️ Domain Sendiri yang TIDAK Boleh Diklik (Blacklist):</span>
+              </label>
+              <input type="text" id="ownDomainsInput"
+                value="mesinprinting.id, anugrahsupplymandiri.com, anugrahsupplymandiri.co.id"
+                placeholder="mesinprinting.id, domain-anda.com"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <span class="text-[10px] text-slate-400 block mt-0.5 leading-tight">Iklan milik domain di atas otomatis dilindungi & TIDAK akan diklik demi menghemat budget.</span>
+            </div>
 
-            <div class="grid grid-cols-2 gap-2 items-center">
-              <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer">
+            <!-- Target Domain/Link Iklan yang WAJIB Diklik (Whitelist) -->
+            <div class="pt-2 border-t border-slate-700/60">
+              <label for="targetAdsInput" class="block text-[11px] text-amber-300 font-bold mb-1 flex items-center gap-1">
+                <span>🎯 Target Domain / Iklan yang WAJIB Diklik (Whitelist):</span>
+              </label>
+              <input type="text" id="targetAdsInput"
+                placeholder="Contoh: laysander.com, monotaro.id"
+                class="w-full bg-slate-900 border border-amber-600/40 rounded-lg px-2.5 py-1.5 text-[11px] text-amber-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
+              <span class="text-[10px] text-amber-400/80 block mt-0.5 leading-tight">Isi domain/link iklan kompetitor yang WAJIB diklik jika muncul saat scan (pisahkan koma). Kosongkan jika ingin mengklik semua kompetitor.</span>
+              
+              <div class="mt-2">
+                <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer select-none">
+                  <input type="checkbox" id="targetOnlyCheckbox"
+                    class="w-3.5 h-3.5 text-amber-500 rounded bg-slate-900 border-slate-700 focus:ring-amber-500">
+                  <span>Hanya klik iklan yang terdaftar di Target di atas (abaikan iklan kompetitor lain)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Pengaturan Klik Lainnya -->
+            <div class="grid grid-cols-2 gap-2 items-center pt-2 border-t border-slate-700/60">
+              <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer select-none">
                 <input type="checkbox" id="clickBottomAdsCheckbox"
                   class="w-3.5 h-3.5 text-amber-500 rounded bg-slate-900 border-slate-700 focus:ring-amber-500">
                 Klik iklan bawah
               </label>
               <div class="flex items-center gap-1.5 justify-end">
                 <span class="text-[11px] text-slate-400">Maks klik:</span>
-                <input type="number" id="maxClicksInput" min="1" max="3" value="1"
-                  class="w-12 bg-slate-900 border border-slate-700 rounded-lg px-1.5 py-1 text-[11px] text-center text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <input type="number" id="maxClicksInput" min="1" max="10" value="3"
+                  class="w-14 bg-slate-900 border border-slate-700 rounded-lg px-1.5 py-1 text-[11px] text-center text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
                 <span class="text-[11px] text-slate-500">/ keyword</span>
               </div>
             </div>
@@ -503,7 +528,7 @@
   </div>
 
   <!-- Client-side script -->
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 
 </html>
