@@ -429,24 +429,24 @@
     const rowsHtml = filtered.map((item, idx) => {
       // Category Badge styling
       let catBadgeClass = 'badge-organic';
-      let catIcon = '🌿';
+      let catIcon = '<img src="icons/organic.png" alt="Organik" class="w-3.5 h-3.5 object-contain inline-block">';
       let catText = 'Organik';
 
       if (item.category === 'ADS') {
         catBadgeClass = 'badge-ads';
-        catIcon = '🟧';
+        catIcon = '<img src="icons/google-ads.png" alt="Google Ads" class="w-3.5 h-3.5 object-contain inline-block">';
         catText = 'Google Ads';
       } else if (item.category === 'MAPS') {
         catBadgeClass = 'badge-maps';
-        catIcon = '🗺️';
+        catIcon = '<img src="icons/maps.png" alt="Maps" class="w-3.5 h-3.5 object-contain inline-block">';
         catText = 'Maps Pack';
       } else if (item.category === 'AI_OVERVIEW') {
         catBadgeClass = 'badge-ai';
-        catIcon = '🟣';
+        catIcon = '<img src="icons/ai.png" alt="AI" class="w-3.5 h-3.5 object-contain inline-block">';
         catText = 'AI Overview';
       } else if (item.category === 'PAA') {
         catBadgeClass = 'badge-paa';
-        catIcon = '❓';
+        catIcon = '<img src="icons/ai.png" alt="PAA" class="w-3.5 h-3.5 object-contain inline-block">';
         catText = 'PAA';
       }
 
