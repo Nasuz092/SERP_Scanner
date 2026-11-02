@@ -15,10 +15,36 @@ if (!fs.existsSync(SCREENSHOTS_DIR)) {
   fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
 }
 
-// External Text File Configurations (keywords.txt, blacklist.txt, config.txt)
-const KEYWORDS_FILE = path.join(__dirname, 'keywords.txt');
-const BLACKLIST_FILE = path.join(__dirname, 'blacklist.txt');
-const CONFIG_FILE = path.join(__dirname, 'config.txt');
+// External Text File Configurations (setup - DO NOT DELETE)
+function getSetupDir() {
+  const candidates = [
+    // Parent root directory (when server.js is inside app/ folder)
+    path.join(__dirname, '..', 'setup - DO NOT DELETE'),
+    path.join(__dirname, '..', 'setup & DO NOT DELETE'),
+    path.join(__dirname, '..', 'setup (DO NOT DELETE)'),
+    path.join(__dirname, '..', 'setup'),
+    // Local sibling directory
+    path.join(__dirname, 'setup - DO NOT DELETE'),
+    path.join(__dirname, 'setup & DO NOT DELETE'),
+    path.join(__dirname, 'setup (DO NOT DELETE)'),
+    path.join(__dirname, 'setup'),
+    // Process current working directory
+    path.join(process.cwd(), 'setup - DO NOT DELETE'),
+    path.join(process.cwd(), 'setup & DO NOT DELETE'),
+    path.join(process.cwd(), 'setup')
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  const defaultDir = candidates[0];
+  try { fs.mkdirSync(defaultDir, { recursive: true }); } catch (e) {}
+  return defaultDir;
+}
+
+const SETUP_DIR = getSetupDir();
+const KEYWORDS_FILE = path.join(SETUP_DIR, 'keywords.txt');
+const BLACKLIST_FILE = path.join(SETUP_DIR, 'blacklist.txt');
+const CONFIG_FILE = path.join(SETUP_DIR, 'config.txt');
 
 function loadKeywordsFile() {
   if (!fs.existsSync(KEYWORDS_FILE)) return [];

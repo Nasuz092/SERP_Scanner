@@ -1,0 +1,15 @@
+=======================================================
+FOLDER SETUP PENGATURAN DEFAULT (DO NOT DELETE)
+=======================================================
+
+Folder ini berisi file pengaturan default untuk Google SERP Scanner.
+JANGAN HAPUS FOLDER INI!
+
+File di dalam folder ini:
+1. keywords.txt   : Daftar kata kunci pencarian Google bawaan (1 baris per kata kunci).
+2. blacklist.txt  : Daftar domain milik sendiri yang TIDAK boleh diklik saat mode klik iklan aktif.
+3. config.txt     : Konfigurasi tambahan (jeda waktu, mode headless, target domain kompetitor).
+
+Anda dapat mengedit file-file di atas langsung menggunakan Notepad.
+Pengaturan akan otomatis dimuat oleh aplikasi setiap kali dijalankan.
+

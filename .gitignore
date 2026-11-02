@@ -1,5 +1,7 @@
 node_modules/
+**/node_modules/
 public/screenshots/*
-!public/screenshots/.gitkeep
+app/public/screenshots/*
+!**/public/screenshots/.gitkeep
 .env
 *.log

@@ -123,7 +123,7 @@ code, kbd, samp, pre, .font-mono, #logContainer {
 }
 
 .check-indicator svg {
-  display: none;
+  display: none !important;
 }
 
 .device-checkbox:checked ~ .check-indicator {
@@ -181,3 +181,90 @@ code, kbd, samp, pre, .font-mono, #logContainer {
   animation: dropdownLeave 0.16s cubic-bezier(0.4, 0, 1, 1) forwards;
   pointer-events: none;
 }
+
+/* Hide native number input spin buttons */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Custom Checkbox Design */
+.custom-chk-box {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-checkbox-input:checked + .custom-chk-box {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.custom-checkbox-input:checked + .custom-chk-box svg {
+  transform: scale(1) !important;
+}
+
+.chk-purple:checked + .custom-chk-box {
+  background-color: #9333ea !important;
+  border-color: #9333ea !important;
+}
+
+.chk-amber:checked + .custom-chk-box {
+  background-color: #d97706 !important;
+  border-color: #d97706 !important;
+}
+
+/* Metric Filter Cards (5 Boxes as Category Filter Buttons) */
+.metric-filter-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.metric-filter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.metric-filter-card:active {
+  transform: translateY(0);
+}
+
+.metric-filter-card.active {
+  transform: translateY(-2px);
+}
+
+.metric-filter-card.active[data-filter="ALL"] {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 16px rgba(37, 99, 235, 0.2) !important;
+}
+
+.metric-filter-card.active[data-filter="ORGANIC"] {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 2px #059669, 0 6px 16px rgba(5, 150, 105, 0.2) !important;
+}
+
+.metric-filter-card.active[data-filter="ADS"] {
+  border-color: #d97706 !important;
+  box-shadow: 0 0 0 2px #d97706, 0 6px 16px rgba(217, 119, 6, 0.2) !important;
+}
+
+.metric-filter-card.active[data-filter="MAPS"] {
+  border-color: #e11d48 !important;
+  box-shadow: 0 0 0 2px #e11d48, 0 6px 16px rgba(225, 29, 72, 0.2) !important;
+}
+
+.metric-filter-card.active[data-filter="AI_OVERVIEW"] {
+  border-color: #9333ea !important;
+  box-shadow: 0 0 0 2px #9333ea, 0 6px 16px rgba(147, 51, 234, 0.2) !important;
+}
+
+.metric-filter-card.active .filter-indicator {
+  transform: scale(1.4);
+}
+.metric-filter-card.active[data-filter="ALL"] .filter-indicator { background-color: #2563eb !important; }
+.metric-filter-card.active[data-filter="ORGANIC"] .filter-indicator { background-color: #059669 !important; }
+.metric-filter-card.active[data-filter="ADS"] .filter-indicator { background-color: #d97706 !important; }
+.metric-filter-card.active[data-filter="MAPS"] .filter-indicator { background-color: #e11d48 !important; }
+.metric-filter-card.active[data-filter="AI_OVERVIEW"] .filter-indicator { background-color: #9333ea !important; }

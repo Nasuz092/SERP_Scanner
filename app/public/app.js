@@ -58,17 +58,17 @@
   const metricMaps = document.getElementById('metricMaps');
   const metricAi = document.getElementById('metricAi');
 
-  // Category counts
-  const catCountAll = document.getElementById('catCountAll');
-  const catCountOrganic = document.getElementById('catCountOrganic');
-  const catCountAds = document.getElementById('catCountAds');
-  const catCountMaps = document.getElementById('catCountMaps');
-  const catCountAi = document.getElementById('catCountAi');
-
   const searchFilter = document.getElementById('searchFilter');
   const resultsTableBody = document.getElementById('resultsTableBody');
   const tableSummary = document.getElementById('tableSummary');
-  const catPills = document.querySelectorAll('.cat-pill');
+  const metricFilterCards = document.querySelectorAll('.metric-filter-card');
+  const activeFilterName = document.getElementById('activeFilterName');
+
+  // Custom Steppers Elements
+  const btnDelayMinus = document.getElementById('btnDelayMinus');
+  const btnDelayPlus = document.getElementById('btnDelayPlus');
+  const btnMaxClicksMinus = document.getElementById('btnMaxClicksMinus');
+  const btnMaxClicksPlus = document.getElementById('btnMaxClicksPlus');
 
   // === Proxy: toggle sub-panel visibility ===
   function toggleProxyOptions() {
@@ -304,17 +304,11 @@
 
     // Update Metrics
     if (counts) {
-      metricTotal.textContent = totalResults || 0;
-      metricOrganic.textContent = counts.organic || 0;
-      metricAds.textContent = counts.ads || 0;
-      metricMaps.textContent = counts.maps || 0;
-      metricAi.textContent = (counts.ai || 0) + (counts.paa || 0);
-
-      catCountAll.textContent = totalResults || 0;
-      catCountOrganic.textContent = counts.organic || 0;
-      catCountAds.textContent = counts.ads || 0;
-      catCountMaps.textContent = counts.maps || 0;
-      catCountAi.textContent = (counts.ai || 0) + (counts.paa || 0);
+      if (metricTotal) metricTotal.textContent = totalResults || 0;
+      if (metricOrganic) metricOrganic.textContent = counts.organic || 0;
+      if (metricAds) metricAds.textContent = counts.ads || 0;
+      if (metricMaps) metricMaps.textContent = counts.maps || 0;
+      if (metricAi) metricAi.textContent = (counts.ai || 0) + (counts.paa || 0);
     }
   }
 
@@ -563,15 +557,67 @@
     resultsTableBody.innerHTML = rowsHtml;
   }
 
-  // Filter Pills click listener
-  catPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      catPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      currentFilter = pill.getAttribute('data-filter') || 'ALL';
-      renderTable();
+  // Filter names dictionary for active filter indicator badge
+  const filterNames = {
+    'ALL': 'Semua Item',
+    'ORGANIC': 'Organik (#1–#10)',
+    'ADS': 'Google Ads',
+    'MAPS': 'Google Maps Pack',
+    'AI_OVERVIEW': 'AI Overview & PAA'
+  };
+
+  // 5 Metric Filter Cards click listeners
+  if (metricFilterCards && metricFilterCards.length > 0) {
+    metricFilterCards.forEach(card => {
+      card.addEventListener('click', () => {
+        metricFilterCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        currentFilter = card.getAttribute('data-filter') || 'ALL';
+        if (activeFilterName) {
+          activeFilterName.textContent = filterNames[currentFilter] || currentFilter;
+        }
+        renderTable();
+      });
     });
-  });
+  }
+
+  // Custom Stepper Buttons: Jeda Antar Keyword (detik: min 1, max 15)
+  if (btnDelayMinus && delayInput) {
+    btnDelayMinus.addEventListener('click', () => {
+      const currentVal = parseInt(delayInput.value, 10) || 3;
+      if (currentVal > 1) {
+        delayInput.value = currentVal - 1;
+      }
+    });
+  }
+
+  if (btnDelayPlus && delayInput) {
+    btnDelayPlus.addEventListener('click', () => {
+      const currentVal = parseInt(delayInput.value, 10) || 3;
+      if (currentVal < 15) {
+        delayInput.value = currentVal + 1;
+      }
+    });
+  }
+
+  // Custom Stepper Buttons: Maks Klik Iklan per keyword (min 1, max 10)
+  if (btnMaxClicksMinus && maxClicksInput) {
+    btnMaxClicksMinus.addEventListener('click', () => {
+      const currentVal = parseInt(maxClicksInput.value, 10) || 3;
+      if (currentVal > 1) {
+        maxClicksInput.value = currentVal - 1;
+      }
+    });
+  }
+
+  if (btnMaxClicksPlus && maxClicksInput) {
+    btnMaxClicksPlus.addEventListener('click', () => {
+      const currentVal = parseInt(maxClicksInput.value, 10) || 3;
+      if (currentVal < 10) {
+        maxClicksInput.value = currentVal + 1;
+      }
+    });
+  }
 
   // Search filter listener
   searchFilter.addEventListener('input', (e) => {

@@ -46,18 +46,39 @@ namespace GoogleSerpScannerApp
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
 
-            // Set Application Window Icon
+            // Set Application Window Icon (Google Search Magnifier)
             try
             {
-                this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                string[] candidateIcoPaths = new string[]
+                {
+                    Path.Combine(appDir, "app.ico"),
+                    Path.Combine(appDir, "app", "app.ico"),
+                    Path.Combine(appDir, "core", "app.ico"),
+                    Path.Combine(appDir, "app", "public", "icons", "logo.png"),
+                    Path.Combine(appDir, "public", "icons", "logo.png")
+                };
+                bool iconLoaded = false;
+                foreach (string p in candidateIcoPaths)
+                {
+                    if (File.Exists(p) && p.EndsWith(".ico", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            this.Icon = new Icon(p);
+                            iconLoaded = true;
+                            break;
+                        }
+                        catch { }
+                    }
+                }
+                if (!iconLoaded)
+                {
+                    this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                }
             }
             catch
             {
-                string icoPath = Path.Combine(appDir, "app.ico");
-                if (File.Exists(icoPath))
-                {
-                    try { this.Icon = new Icon(icoPath); } catch { }
-                }
+                // Fallback safe ignore
             }
 
             // Header Panel
@@ -245,11 +266,23 @@ namespace GoogleSerpScannerApp
 
             try
             {
+                string workingDir = appDir;
+                string[] subdirs = new string[] { "app", "core", "system" };
+                foreach (string sub in subdirs)
+                {
+                    string candidate = Path.Combine(appDir, sub, "server.js");
+                    if (File.Exists(candidate))
+                    {
+                        workingDir = Path.Combine(appDir, sub);
+                        break;
+                    }
+                }
+
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = "node",
                     Arguments = "server.js",
-                    WorkingDirectory = appDir,
+                    WorkingDirectory = workingDir,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
