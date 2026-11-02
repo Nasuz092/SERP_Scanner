@@ -452,39 +452,54 @@
 
             <!-- Custom Dropdown Card -->
             <div id="exportDropdownMenu"
-              class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 transition-all origin-top-right transform duration-150">
+              class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 origin-top-right">
               
               <div class="px-3.5 py-1.5 border-b border-slate-100 mb-1 flex items-center justify-between">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pilih Format Unduhan</span>
-                <span class="text-[10px] font-mono text-slate-400">2 Opsi</span>
+                <span class="text-[10px] font-mono text-slate-400">3 Opsi</span>
               </div>
 
               <div class="px-1.5 space-y-1">
-                <!-- Option 1: Excel / CSV -->
-                <a id="btnExportCsv" href="/api/scan/export/csv" download
+                <!-- Option 1: Microsoft Excel -->
+                <a id="btnExportExcel" href="/api/scan/export/excel" download
                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/70 text-slate-800 transition group cursor-pointer">
                   <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center p-1.5 shrink-0 group-hover:scale-105 transition">
                     <img src="icons/excel.png" alt="Excel" class="w-full h-full object-contain">
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700 transition">Excel / CSV</span>
-                      <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-100/70 text-emerald-800 font-semibold">.CSV</span>
+                      <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700 transition">Microsoft Excel</span>
+                      <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-100/70 text-emerald-800 font-semibold">.XLS</span>
                     </div>
-                    <p class="text-[11px] text-slate-500 truncate mt-0.5">Kompatibel Microsoft Excel &amp; Spreadsheet</p>
+                    <p class="text-[11px] text-slate-500 truncate mt-0.5">Format workbook tabel Microsoft Excel</p>
                   </div>
                 </a>
 
-                <!-- Option 2: JSON -->
+                <!-- Option 2: CSV File -->
+                <a id="btnExportCsv" href="/api/scan/export/csv" download
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50/60 border border-transparent hover:border-blue-200/70 text-slate-800 transition group cursor-pointer">
+                  <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200/70 flex items-center justify-center p-1.5 shrink-0 group-hover:scale-105 transition">
+                    <img src="icons/csv.png" alt="CSV" class="w-full h-full object-contain">
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition">CSV Spreadsheet</span>
+                      <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100/70 text-blue-800 font-semibold">.CSV</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 truncate mt-0.5">Format teks nilai dipisahkan koma</p>
+                  </div>
+                </a>
+
+                <!-- Option 3: JSON -->
                 <a id="btnExportJson" href="/api/scan/export/json" download
-                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-800 transition group cursor-pointer">
-                  <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center p-1.5 shrink-0 group-hover:scale-105 transition">
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50/60 border border-transparent hover:border-purple-200/70 text-slate-800 transition group cursor-pointer">
+                  <div class="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200/70 flex items-center justify-center p-1.5 shrink-0 group-hover:scale-105 transition">
                     <img src="icons/json.png" alt="JSON" class="w-full h-full object-contain">
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition">Data JSON</span>
-                      <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">.JSON</span>
+                      <span class="text-xs font-bold text-slate-800 group-hover:text-purple-700 transition">Data JSON</span>
+                      <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 font-semibold">.JSON</span>
                     </div>
                     <p class="text-[11px] text-slate-500 truncate mt-0.5">Format data mentah untuk developer &amp; API</p>
                   </div>

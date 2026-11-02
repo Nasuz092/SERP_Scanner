@@ -46,6 +46,20 @@ namespace GoogleSerpScannerApp
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
 
+            // Set Application Window Icon
+            try
+            {
+                this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            }
+            catch
+            {
+                string icoPath = Path.Combine(appDir, "app.ico");
+                if (File.Exists(icoPath))
+                {
+                    try { this.Icon = new Icon(icoPath); } catch { }
+                }
+            }
+
             // Header Panel
             Panel headerPanel = new Panel
             {

@@ -133,18 +133,37 @@ code, kbd, samp, pre, .font-mono, #logContainer {
   scrollbar-color: #475569 #0f172a;
 }
 
-/* Custom Dropdown Animation */
-@keyframes dropdownFadeIn {
-  from {
+/* Custom Dropdown Animation (Entrance & Exit) */
+@keyframes dropdownEnter {
+  0% {
     opacity: 0;
-    transform: translateY(-6px) scale(0.97);
+    transform: translateY(-8px) scale(0.95);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-#exportDropdownMenu:not(.hidden) {
-  animation: dropdownFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes dropdownLeave {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+}
+
+.dropdown-anim-enter {
+  display: block !important;
+  animation: dropdownEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+}
+
+.dropdown-anim-leave {
+  display: block !important;
+  animation: dropdownLeave 0.16s cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
 }

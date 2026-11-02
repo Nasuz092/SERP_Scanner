@@ -338,10 +338,117 @@ function generateCSV(items) {
     escapeCsv(it.snippet),
     escapeCsv(Array.isArray(it.sitelinks) ? it.sitelinks.join(' | ') : ''),
     escapeCsv(it.extra),
-    escapeCsv(it.screenshot ? `http://localhost:${PORT}${it.screenshot}` : '')
+    escapeCsv(it.screenshot ? `http://${ACCESS_HOST}:${PORT}${it.screenshot}` : '')
   ].join(','));
 
   return '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+}
+
+// Convert dataset to Microsoft Excel XML Spreadsheet (.xls)
+function generateExcelXML(items) {
+  const escapeXml = (str) => {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  };
+
+  const headers = [
+    'No',
+    'Kata Kunci',
+    'Perangkat',
+    'Kategori',
+    'Posisi / Placement',
+    'Peringkat (Rank)',
+    'Judul (Title)',
+    'Domain',
+    'URL Target',
+    'Status Klik Iklan',
+    'Detail Klik Iklan',
+    'Deskripsi / Snippet / Jawaban AI',
+    'Sitelinks / Sumber Sitasi AI',
+    'Catatan / Penanda',
+    'Bukti Screenshot URL'
+  ];
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Center"/>
+   <Font ss:FontName="Poppins, Segoe UI, Arial" ss:Size="10" ss:Color="#1E293B"/>
+  </Style>
+  <Style ss:ID="Header">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CBD5E1"/>
+   </Borders>
+   <Font ss:FontName="Poppins, Segoe UI, Arial" ss:Size="10" ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#2563EB" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="RowEven">
+   <Interior ss:Color="#F8FAFC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Google SERP Scan">
+  <Table>
+   <Column ss:Width="40"/>
+   <Column ss:Width="160"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="50"/>
+   <Column ss:Width="250"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="250"/>
+   <Column ss:Width="130"/>
+   <Column ss:Width="180"/>
+   <Column ss:Width="300"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="250"/>
+   <Row ss:Height="26">
+`;
+
+  headers.forEach(h => {
+    xml += `    <Cell ss:StyleID="Header"><Data ss:Type="String">${escapeXml(h)}</Data></Cell>\n`;
+  });
+  xml += `   </Row>\n`;
+
+  items.forEach((it, idx) => {
+    const isEven = idx % 2 === 1;
+    const styleAttr = isEven ? ' ss:StyleID="RowEven"' : '';
+    xml += `   <Row ss:Height="20"${styleAttr}>\n`;
+    xml += `    <Cell><Data ss:Type="Number">${idx + 1}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.keyword)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.device)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.category)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.placement)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="${it.rank !== undefined && it.rank !== '' ? 'Number' : 'String'}">${it.rank !== undefined && it.rank !== '' ? it.rank : '-'}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.title)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.domain)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.url)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.category === 'ADS' ? (it.isClicked ? 'DIKLIK OTOMATIS' : (it.clickStatus || 'TIDAK DIKLIK')) : '-')}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.clickDetails || '-')}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.snippet)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(Array.isArray(it.sitelinks) ? it.sitelinks.join(' | ') : '')}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.extra)}</Data></Cell>\n`;
+    xml += `    <Cell><Data ss:Type="String">${escapeXml(it.screenshot ? `http://${ACCESS_HOST}:${PORT}${it.screenshot}` : '')}</Data></Cell>\n`;
+    xml += `   </Row>\n`;
+  });
+
+  xml += `  </Table>
+ </Worksheet>
+</Workbook>`;
+  return xml;
 }
 
 // MIME Types map
@@ -537,6 +644,18 @@ const server = http.createServer(async (req, res) => {
       maxClicksPerKeyword: scanSession.maxClicksPerKeyword,
       summary: scanSession.clickSummary
     }));
+    return;
+  }
+
+  // Export: Excel (.xls XML Spreadsheet)
+  if (pathname === '/api/scan/export/excel' && req.method === 'GET') {
+    const excelContent = generateExcelXML(scanSession.results);
+    const filename = `google-serp-scan-${new Date().toISOString().slice(0, 10)}.xls`;
+    res.writeHead(200, {
+      'Content-Type': 'application/vnd.ms-excel; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`
+    });
+    res.end(excelContent);
     return;
   }
 

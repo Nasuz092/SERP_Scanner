@@ -847,29 +847,44 @@
     });
   }
 
-  // === Custom Export Dropdown Menu ===
+  // === Custom Export Dropdown Menu (with Entrance & Exit Animation) ===
   const btnExportMenu = document.getElementById('btnExportMenu');
   const exportDropdownMenu = document.getElementById('exportDropdownMenu');
   const exportChevron = document.getElementById('exportChevron');
   const exportDropdownWrapper = document.getElementById('exportDropdownWrapper');
+  let isExportMenuClosing = false;
 
-  function toggleExportMenu() {
-    if (!exportDropdownMenu) return;
-    const isHidden = exportDropdownMenu.classList.contains('hidden');
-    if (isHidden) {
-      exportDropdownMenu.classList.remove('hidden');
-      if (btnExportMenu) btnExportMenu.setAttribute('aria-expanded', 'true');
-      if (exportChevron) exportChevron.classList.add('rotate-180');
-    } else {
-      closeExportMenu();
-    }
+  function openExportMenu() {
+    if (!exportDropdownMenu || isExportMenuClosing) return;
+    exportDropdownMenu.classList.remove('hidden', 'dropdown-anim-leave');
+    exportDropdownMenu.classList.add('dropdown-anim-enter');
+    if (btnExportMenu) btnExportMenu.setAttribute('aria-expanded', 'true');
+    if (exportChevron) exportChevron.classList.add('rotate-180');
   }
 
   function closeExportMenu() {
-    if (!exportDropdownMenu) return;
-    exportDropdownMenu.classList.add('hidden');
+    if (!exportDropdownMenu || exportDropdownMenu.classList.contains('hidden') || isExportMenuClosing) return;
+    isExportMenuClosing = true;
+    exportDropdownMenu.classList.remove('dropdown-anim-enter');
+    exportDropdownMenu.classList.add('dropdown-anim-leave');
     if (btnExportMenu) btnExportMenu.setAttribute('aria-expanded', 'false');
     if (exportChevron) exportChevron.classList.remove('rotate-180');
+
+    setTimeout(() => {
+      exportDropdownMenu.classList.add('hidden');
+      exportDropdownMenu.classList.remove('dropdown-anim-leave');
+      isExportMenuClosing = false;
+    }, 160);
+  }
+
+  function toggleExportMenu() {
+    if (!exportDropdownMenu) return;
+    const isVisible = !exportDropdownMenu.classList.contains('hidden') && !isExportMenuClosing;
+    if (isVisible) {
+      closeExportMenu();
+    } else {
+      openExportMenu();
+    }
   }
 
   if (btnExportMenu) {
@@ -886,9 +901,11 @@
     }
   });
 
-  // Close dropdown upon selecting an export format
+  // Close dropdown upon selecting any export format
+  const btnExportExcel = document.getElementById('btnExportExcel');
   const btnExportCsv = document.getElementById('btnExportCsv');
   const btnExportJson = document.getElementById('btnExportJson');
+  if (btnExportExcel) btnExportExcel.addEventListener('click', () => closeExportMenu());
   if (btnExportCsv) btnExportCsv.addEventListener('click', () => closeExportMenu());
   if (btnExportJson) btnExportJson.addEventListener('click', () => closeExportMenu());
 
