@@ -116,10 +116,24 @@ code, kbd, samp, pre, .font-mono, #logContainer {
 }
 
 /* Checkbox indicator toggle (device cards) */
-.device-checkbox:checked + span + span + span + .check-indicator {
-  background-color: #2563eb;
-  border-color: #2563eb;
-  color: white;
+.check-indicator {
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.check-indicator svg {
+  display: none;
+}
+
+.device-checkbox:checked ~ .check-indicator {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.device-checkbox:checked ~ .check-indicator svg {
+  display: block !important;
+  color: #ffffff !important;
 }
 
 /* Click Ads: pulse animation on badge when active */
