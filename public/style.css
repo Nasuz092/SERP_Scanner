@@ -1,4 +1,4 @@
-/* Custom styles for Google SERP Scanner */
+/* Custom styles for Google SERP Scanner - Light Modern Theme */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -7,79 +7,77 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.7);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.9);
+  background: #94a3b8;
 }
 
-/* Category Badges */
+/* Category Badges (Light Pastel Theme) */
 .badge-ads {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
 }
 
 .badge-organic {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
 }
 
 .badge-maps {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: #ffe4e6;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
 }
 
 .badge-ai {
-  background-color: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  background-color: #f3e8ff;
+  color: #6b21a8;
+  border: 1px solid #e9d5ff;
 }
 
 .badge-paa {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background-color: #e0f2fe;
+  color: #075985;
+  border: 1px solid #bae6fd;
 }
 
 /* Device Badges */
 .badge-desktop {
-  background-color: rgba(51, 65, 85, 0.6);
-  color: #e2e8f0;
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 }
 
 .badge-mobile {
-  background-color: rgba(30, 58, 138, 0.4);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .badge-tablet {
-  background-color: rgba(67, 56, 202, 0.4);
-  color: #c7d2fe;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
 }
 
 /* Pulse indicator animation */
 @keyframes pulseGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
-
   50% {
     opacity: 0.75;
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 }
 
@@ -88,21 +86,30 @@
 }
 
 /* Table Hover Effect */
-#resultsTableBody tr:hover {
-  background-color: rgba(30, 41, 59, 0.7);
+#resultsTableBody tr {
+  transition: background-color 0.15s ease;
 }
 
-/* Category filter buttons active state */
+#resultsTableBody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Category filter buttons */
+.cat-pill {
+  transition: all 0.2s ease;
+}
+
 .cat-pill.active {
   background-color: #2563eb !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  border-color: #2563eb !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 /* Checkbox indicator toggle (device cards) */
-.device-checkbox:checked+span+span+span+.check-indicator {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
+.device-checkbox:checked + span + span + span + .check-indicator {
+  background-color: #2563eb;
+  border-color: #2563eb;
   color: white;
 }
 
@@ -111,18 +118,8 @@
   animation: pulseGlow 2.4s infinite ease-in-out;
 }
 
-/* Click Ads options panel smooth reveal */
-#clickAdsOptions {
-  transition: max-height 0.25s ease-in-out, opacity 0.25s ease-in-out;
-}
-
-/* Amber focus ring for own-domains input */
-#ownDomainsInput:focus {
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
-}
-
 /* Terminal log scroll */
 #logContainer {
   scrollbar-width: thin;
-  scrollbar-color: rgba(71, 85, 105, 0.7) rgba(15, 23, 42, 0.6);
+  scrollbar-color: #475569 #0f172a;
 }

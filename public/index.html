@@ -29,41 +29,34 @@
   </script>
   <link rel="stylesheet" href="style.css">
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%22><text y=%2222%22 font-size=%2220%22>🔍</text></svg>">
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
 </head>
 
-<body
-  class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
   <!-- Top Navigation Bar -->
-  <header
-    class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between shadow-lg">
-    <div class="flex items-center space-x-3">
-      <div
-        class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-md shadow-blue-500/20">
+  <header class="border-b border-slate-200/90 bg-white sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between shadow-xs">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xl shadow-sm">
         🔍
       </div>
       <div>
-        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-          Google SERP Scanner
-          <span
-            class="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">Windows
-            App</span>
-        </h1>
-        <p class="text-xs text-slate-400">Scan Halaman 1 Google Multi-Device (Desktop, Mobile, Tablet) & Deteksi
-          Organik, Ads, Maps</p>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-bold tracking-tight text-slate-900">Google SERP Scanner</h1>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-semibold">Windows App</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">Scan Halaman 1 Google Multi-Device (Desktop, Mobile, Tablet) &amp; Deteksi Organik, Ads, Maps</p>
       </div>
     </div>
 
     <!-- Right Header Status & Action -->
-    <div class="flex items-center space-x-4">
-      <div id="sessionStatusPill"
-        class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <div class="flex items-center space-x-3">
+      <div id="sessionStatusPill" class="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
         <span id="sessionStatusText">Siap (Idle)</span>
       </div>
-      <a href="https://mesinprinting.id" target="_blank"
-        class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
+      <span class="text-slate-300">|</span>
+      <a href="https://mesinprinting.id" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
         mesinprinting.id
       </a>
     </div>
@@ -76,191 +69,184 @@
     <div class="lg:col-span-4 space-y-5 flex flex-col">
 
       <!-- Keyword Input Box Card -->
-      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-xl backdrop-blur">
-        <div class="flex items-center justify-between mb-3">
-          <label for="keywordsInput" class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <span>📝 Daftar Kata Kunci (Keywords)</span>
-          </label>
-          <span id="keywordCountBadge" class="text-xs font-mono px-2 py-0.5 rounded-md bg-slate-700 text-slate-300">
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-blue-600 text-base">📄</span>
+            <label for="keywordsInput" class="text-sm font-bold text-slate-800">Daftar Kata Kunci (Keywords)</label>
+          </div>
+          <span id="keywordCountBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100 font-mono">
             0 keyword
           </span>
         </div>
 
-        <p class="text-xs text-slate-400 mb-2">
+        <p class="text-xs text-slate-500 mb-2.5">
           Masukkan 1 kata kunci per baris (bisa paste hingga 300+ keyword sekaligus):
         </p>
 
-        <textarea id="keywordsInput" rows="9"
-          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono leading-relaxed resize-y"
-          placeholder="mesin digital printing outdoor&#10;mesin digital printing indoor&#10;jual printer dtf a3&#10;mesin printing uv flatbed&#10;anugrah supply mandiri&#10;..."></textarea>
+        <textarea id="keywordsInput" rows="7"
+          class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono leading-relaxed resize-y"
+          placeholder="mesin digital printing&#10;harga mesin cetak banner&#10;harga mesin cetak baliho&#10;harga mesin cetak spanduk&#10;harga mesin outdoor&#10;jual mesin digital printing"></textarea>
 
         <!-- Presets & File Upload -->
         <div class="mt-3 flex items-center justify-between gap-2 flex-wrap">
           <div class="flex items-center gap-1.5">
             <button id="btnPresetMesin" type="button"
-              class="text-xs px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 transition font-medium">
+              class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-medium cursor-pointer">
               Contoh Mesin Printing
             </button>
             <button id="btnClearInput" type="button"
-              class="text-xs px-2.5 py-1 rounded-lg bg-slate-700/60 hover:bg-red-500/20 hover:text-red-300 text-slate-300 transition">
+              class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-medium cursor-pointer">
               Bersihkan
             </button>
           </div>
 
-          <label
-            class="cursor-pointer text-xs px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 transition flex items-center gap-1">
-            <span>📂 Upload TXT / CSV</span>
+          <label class="cursor-pointer text-xs px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-xs transition flex items-center gap-1.5">
+            <span>📁 Upload TXT / CSV</span>
             <input type="file" id="fileImport" accept=".txt,.csv" class="hidden">
           </label>
         </div>
       </div>
 
       <!-- Device Configuration Card -->
-      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-xl">
-        <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
-          <span>📱 Pilih Perangkat (Devices)</span>
-          <span class="text-xs font-normal text-slate-400">(Pilih 1 atau lebih)</span>
-        </h3>
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-blue-600 text-base">🎛️</span>
+          <h3 class="text-sm font-bold text-slate-800">Pilih Perangkat (Devices)</h3>
+          <span class="text-xs text-slate-400 font-normal">(Pilih 1 atau lebih)</span>
+        </div>
 
         <div class="grid grid-cols-3 gap-2.5 mb-4">
           <!-- Desktop Option -->
-          <label
-            class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-700/30 transition has-[:checked]:border-blue-500 has-[:checked]:bg-blue-950/30">
+          <label class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition has-[:checked]:border-2 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40">
             <input type="checkbox" id="devDesktop" value="desktop" checked class="sr-only device-checkbox">
             <span class="text-2xl mb-1">🖥️</span>
-            <span class="text-xs font-semibold text-slate-200">Desktop</span>
-            <span class="text-[10px] text-slate-400 mt-0.5">1920x1080</span>
-            <div
-              class="check-indicator absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full border border-slate-600 flex items-center justify-center text-[10px]">
-              ✓</div>
+            <span class="text-xs font-bold text-slate-800">Desktop</span>
+            <span class="text-[10px] text-slate-500 mt-0.5">1920×1080</span>
+            <div class="check-indicator absolute top-2 right-2 w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold">✓</div>
           </label>
 
           <!-- Mobile Option -->
-          <label
-            class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-700/30 transition has-[:checked]:border-blue-500 has-[:checked]:bg-blue-950/30">
+          <label class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition has-[:checked]:border-2 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40">
             <input type="checkbox" id="devMobile" value="mobile" checked class="sr-only device-checkbox">
             <span class="text-2xl mb-1">📱</span>
-            <span class="text-xs font-semibold text-slate-200">Mobile</span>
-            <span class="text-[10px] text-slate-400 mt-0.5">Pixel 7 / Phone</span>
-            <div
-              class="check-indicator absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full border border-slate-600 flex items-center justify-center text-[10px]">
-              ✓</div>
+            <span class="text-xs font-bold text-slate-800">Mobile</span>
+            <span class="text-[10px] text-slate-500 mt-0.5">iOS / Android</span>
+            <div class="check-indicator absolute top-2 right-2 w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold">✓</div>
           </label>
 
           <!-- Tablet Option -->
-          <label
-            class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-700/30 transition has-[:checked]:border-blue-500 has-[:checked]:bg-blue-950/30">
+          <label class="cursor-pointer relative flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition has-[:checked]:border-2 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40">
             <input type="checkbox" id="devTablet" value="tablet" checked class="sr-only device-checkbox">
             <span class="text-2xl mb-1">📟</span>
-            <span class="text-xs font-semibold text-slate-200">Tablet</span>
-            <span class="text-[10px] text-slate-400 mt-0.5">iPad / 820x1180</span>
-            <div
-              class="check-indicator absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full border border-slate-600 flex items-center justify-center text-[10px]">
-              ✓</div>
+            <span class="text-xs font-bold text-slate-800">Tablet</span>
+            <span class="text-[10px] text-slate-500 mt-0.5">iPad / 1280×800</span>
+            <div class="check-indicator absolute top-2 right-2 w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold">✓</div>
           </label>
         </div>
 
         <!-- Scanning Advanced Options -->
-        <div class="space-y-3 pt-3 border-t border-slate-700/60">
+        <div class="space-y-3 pt-3 border-t border-slate-100">
           <div class="flex items-center justify-between">
-            <label for="delayInput" class="text-xs text-slate-300 flex items-center gap-1.5">
-              <span>⏱️ Jeda Antar Keyword:</span>
+            <label for="delayInput" class="text-xs font-medium text-slate-700 flex items-center gap-1.5">
+              <span>⌛ Jeda Antar Keyword:</span>
             </label>
             <div class="flex items-center gap-1.5">
               <input type="number" id="delayInput" min="1" max="15" value="3"
-                class="w-14 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-center text-slate-100 font-mono">
-              <span class="text-xs text-slate-400">detik (+ jitter)</span>
+                class="w-14 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs text-center text-slate-800 font-mono font-semibold">
+              <span class="text-xs text-slate-500">detik (1-5 jitter)</span>
             </div>
           </div>
-          <p class="text-[11px] text-slate-400 leading-tight">
-            *Direkomendasikan 3-5 detik agar pemindaian hingga 300 keyword aman dari blokir bot Google.
+          <p class="text-[11px] text-slate-400 leading-tight flex items-start gap-1">
+            <span>ⓘ</span>
+            <span>Direkomendasikan 3–5 detik agar permintaan hingga 300 keyword aman dari blokir bot Google.</span>
           </p>
 
           <div class="flex items-center justify-between pt-1">
-            <span class="text-xs text-slate-300">Mode Browser:</span>
+            <span class="text-xs text-slate-700 font-medium">Mode Browser:</span>
             <label class="inline-flex items-center cursor-pointer gap-2">
               <input type="checkbox" id="headlessCheckbox" checked
-                class="w-4 h-4 text-blue-600 rounded bg-slate-900 border-slate-700 focus:ring-blue-500">
-              <span class="text-xs text-slate-300">Headless (Latar Belakang)</span>
+                class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+              <span class="text-xs text-slate-600">Headless (Latar Belakang)</span>
             </label>
           </div>
 
           <!-- Proxy Settings -->
-          <div class="space-y-2 pt-2 border-t border-slate-700/60">
+          <div class="space-y-2 pt-2 border-t border-slate-100">
             <label class="inline-flex items-center cursor-pointer gap-2 select-none">
               <input type="checkbox" id="useProxyCheckbox"
-                class="w-4 h-4 text-purple-500 rounded bg-slate-900 border-slate-700 focus:ring-purple-500">
-              <span class="text-xs font-semibold text-purple-300 flex items-center gap-1">
+                class="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
+              <span class="text-xs font-semibold text-purple-700 flex items-center gap-1">
                 🌐 Gunakan Proxy (Bypass Blokir IP)
               </span>
             </label>
             <div id="proxyOptions" class="hidden space-y-1.5 pl-6 pt-1">
-              <label for="proxyServerInput" class="block text-[11px] text-slate-400">
-                Format: <code class="text-purple-300 font-mono">http://ip:port</code> atau <code class="text-purple-300 font-mono">http://user:pass@ip:port</code>
+              <label for="proxyServerInput" class="block text-[11px] text-slate-500">
+                Format: <code class="text-purple-700 font-mono">http://ip:port</code> atau <code class="text-purple-700 font-mono">http://user:pass@ip:port</code>
               </label>
               <input type="text" id="proxyServerInput" placeholder="http://123.45.67.89:8080"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-purple-500">
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-purple-500">
             </div>
           </div>
         </div>
 
-        <!-- Click Ads Options (NEW) -->
-        <div class="space-y-2 pt-3 mt-3 border-t border-amber-700/40">
+        <!-- Click Ads Options (Enhanced with Whitelist Target) -->
+        <div class="space-y-2 pt-3 mt-3 border-t border-amber-200/80">
           <label class="inline-flex items-center cursor-pointer gap-2 select-none">
             <input type="checkbox" id="clickAdsCheckbox"
-              class="w-4 h-4 text-amber-500 rounded bg-slate-900 border-slate-700 focus:ring-amber-500">
-            <span class="text-xs font-bold text-amber-300 flex items-center gap-1">
+              class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500">
+            <span class="text-xs font-bold text-amber-800 flex items-center gap-1">
               🖱️ Klik Iklan Ads yang Terdeteksi
             </span>
           </label>
 
-          <p class="text-[11px] text-rose-400 leading-tight pl-6">
+          <p class="text-[11px] text-rose-600 leading-tight pl-6">
             ⚠️ Iklan dari domain sendiri akan otomatis dilewati. Gunakan hanya untuk riset/QA iklan Anda.
           </p>
 
           <div id="clickAdsOptions" class="hidden space-y-3 pl-6 pt-1">
             <!-- Domain Sendiri (Blacklist) -->
             <div>
-              <label for="ownDomainsInput" class="block text-[11px] text-blue-300 font-semibold mb-1 flex items-center gap-1">
+              <label for="ownDomainsInput" class="block text-[11px] text-blue-700 font-semibold mb-1 flex items-center gap-1">
                 <span>🛡️ Domain Sendiri yang TIDAK Boleh Diklik (Blacklist):</span>
               </label>
               <input type="text" id="ownDomainsInput"
                 value="mesinprinting.id, anugrahsupplymandiri.com, anugrahsupplymandiri.co.id"
                 placeholder="mesinprinting.id, domain-anda.com"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <span class="text-[10px] text-slate-400 block mt-0.5 leading-tight">Iklan milik domain di atas otomatis dilindungi & TIDAK akan diklik demi menghemat budget.</span>
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <span class="text-[10px] text-slate-500 block mt-0.5 leading-tight">Iklan milik domain di atas otomatis dilindungi &amp; TIDAK akan diklik demi menghemat budget.</span>
             </div>
 
             <!-- Target Domain/Link Iklan yang WAJIB Diklik (Whitelist) -->
-            <div class="pt-2 border-t border-slate-700/60">
-              <label for="targetAdsInput" class="block text-[11px] text-amber-300 font-bold mb-1 flex items-center gap-1">
+            <div class="pt-2 border-t border-slate-100">
+              <label for="targetAdsInput" class="block text-[11px] text-amber-800 font-bold mb-1 flex items-center gap-1">
                 <span>🎯 Target Domain / Iklan yang WAJIB Diklik (Whitelist):</span>
               </label>
               <input type="text" id="targetAdsInput"
                 placeholder="Contoh: laysander.com, monotaro.id"
-                class="w-full bg-slate-900 border border-amber-600/40 rounded-lg px-2.5 py-1.5 text-[11px] text-amber-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
-              <span class="text-[10px] text-amber-400/80 block mt-0.5 leading-tight">Isi domain/link iklan kompetitor yang WAJIB diklik jika muncul saat scan (pisahkan koma). Kosongkan jika ingin mengklik semua kompetitor.</span>
+                class="w-full bg-amber-50/50 border border-amber-300 rounded-lg px-2.5 py-1.5 text-[11px] text-amber-900 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
+              <span class="text-[10px] text-amber-700/80 block mt-0.5 leading-tight">Isi domain/link iklan kompetitor yang WAJIB diklik jika muncul saat scan (pisahkan koma). Kosongkan jika ingin mengklik semua kompetitor.</span>
               
               <div class="mt-2">
-                <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer select-none">
+                <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-700 cursor-pointer select-none">
                   <input type="checkbox" id="targetOnlyCheckbox"
-                    class="w-3.5 h-3.5 text-amber-500 rounded bg-slate-900 border-slate-700 focus:ring-amber-500">
+                    class="w-3.5 h-3.5 text-amber-600 rounded border-slate-300 focus:ring-amber-500">
                   <span>Hanya klik iklan yang terdaftar di Target di atas (abaikan iklan kompetitor lain)</span>
                 </label>
               </div>
             </div>
 
             <!-- Pengaturan Klik Lainnya -->
-            <div class="grid grid-cols-2 gap-2 items-center pt-2 border-t border-slate-700/60">
-              <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer select-none">
+            <div class="grid grid-cols-2 gap-2 items-center pt-2 border-t border-slate-100">
+              <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-700 cursor-pointer select-none">
                 <input type="checkbox" id="clickBottomAdsCheckbox"
-                  class="w-3.5 h-3.5 text-amber-500 rounded bg-slate-900 border-slate-700 focus:ring-amber-500">
+                  class="w-3.5 h-3.5 text-amber-600 rounded border-slate-300 focus:ring-amber-500">
                 Klik iklan bawah
               </label>
               <div class="flex items-center gap-1.5 justify-end">
-                <span class="text-[11px] text-slate-400">Maks klik:</span>
+                <span class="text-[11px] text-slate-500">Maks klik:</span>
                 <input type="number" id="maxClicksInput" min="1" max="10" value="3"
-                  class="w-14 bg-slate-900 border border-slate-700 rounded-lg px-1.5 py-1 text-[11px] text-center text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500">
+                  class="w-14 bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-[11px] text-center text-slate-800 font-mono font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500">
                 <span class="text-[11px] text-slate-500">/ keyword</span>
               </div>
             </div>
@@ -269,35 +255,35 @@
       </div>
 
       <!-- Action Buttons Card -->
-      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-3">
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-3">
         <button id="btnStartScan" type="button"
-          class="w-full py-3.5 px-4 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 active:scale-[0.99] transition flex items-center justify-center gap-2">
+          class="w-full py-3.5 px-4 rounded-xl font-bold text-sm tracking-wide text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer">
           <span>🚀 Mulai Scan Sekarang</span>
         </button>
 
         <div class="grid grid-cols-2 gap-2">
           <button id="btnStopScan" type="button" disabled
-            class="py-2.5 px-3 rounded-xl font-semibold text-xs text-red-300 bg-red-950/40 hover:bg-red-900/50 border border-red-800/40 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-1.5">
+            class="py-2.5 px-3 rounded-xl font-semibold text-xs text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span>⏹️ Berhenti</span>
           </button>
           <button id="btnClearData" type="button"
-            class="py-2.5 px-3 rounded-xl font-semibold text-xs text-slate-300 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 transition flex items-center justify-center gap-1.5">
+            class="py-2.5 px-3 rounded-xl font-semibold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition flex items-center justify-center gap-1.5 cursor-pointer">
             <span>🗑️ Reset Hasil</span>
           </button>
         </div>
       </div>
 
       <!-- Live Terminal Log Box -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col min-h-[220px] shadow-inner">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-          <span class="text-xs font-mono font-bold text-slate-400 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs flex-1 flex flex-col min-h-[220px]">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2">
+          <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             Terminal Aktivitas Scanner
           </span>
-          <span id="logCounter" class="text-[10px] font-mono text-slate-500">0 logs</span>
+          <span id="logCounter" class="text-[10px] font-mono text-slate-400">0 logs</span>
         </div>
         <div id="logContainer"
-          class="flex-1 overflow-y-auto font-mono text-xs space-y-1.5 pr-1 max-h-[260px] text-slate-300 leading-relaxed">
+          class="flex-1 overflow-y-auto font-mono text-xs space-y-1.5 p-3 rounded-xl bg-slate-900 text-slate-300 max-h-[260px] leading-relaxed shadow-inner">
           <div class="text-slate-500 italic">Siap memindai... Masukkan kata kunci lalu klik Mulai Scan.</div>
         </div>
       </div>
@@ -308,154 +294,171 @@
     <div class="lg:col-span-8 space-y-5 flex flex-col">
 
       <!-- Realtime Progress Bar Card -->
-      <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl">
-        <div class="flex items-center justify-between mb-2">
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-2.5">
           <div class="flex items-center gap-2 flex-wrap">
             <span id="currentStatusIndicator"
-              class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
-              Menunggu Input
+              class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ Selesai
             </span>
             <span id="clickInfoBadge"
-              class="hidden text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
-              🖱️ 0 klik / 0 dilewati
+              class="hidden text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-mono">
+              := ± 0 klik / 0 dilewati
             </span>
-            <span id="currentTaskLabel" class="text-xs text-slate-300 font-medium truncate max-w-[420px]">
+            <span id="currentTaskLabel" class="text-xs text-slate-600 font-medium truncate max-w-[420px]">
               -
             </span>
           </div>
-          <span id="progressPercent" class="text-sm font-bold font-mono text-slate-200">
+          <span id="progressPercent" class="text-sm font-bold font-mono text-slate-900">
             0%
           </span>
         </div>
 
         <!-- Progress bar line -->
-        <div
-          class="w-full bg-slate-900 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-700/60 shadow-inner">
+        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
           <div id="progressBar"
-            class="bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-300 w-0">
+            class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full rounded-full transition-all duration-300 w-0">
           </div>
         </div>
 
-        <div class="flex items-center justify-between mt-2.5 text-xs text-slate-400">
+        <div class="flex items-center justify-between mt-2.5 text-xs text-slate-500">
           <span id="progressDetail">0 dari 0 tugas selesai</span>
           <span id="timeElapsed">Waktu: 00:00</span>
         </div>
       </div>
 
-      <!-- Quick Metrics Grid -->
+      <!-- 5 Quick Metrics Grid -->
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <!-- Total Scanned -->
-        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5 flex flex-col">
-          <span class="text-xs text-slate-400 font-medium">Total Item</span>
-          <span id="metricTotal" class="text-2xl font-bold font-mono text-white mt-1">0</span>
-          <span class="text-[10px] text-slate-500 mt-0.5">Semua hasil Page 1</span>
+        <div class="bg-gradient-to-b from-blue-50/20 to-blue-50/80 border border-blue-100 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-xs">
+          <div>
+            <span class="text-xs text-slate-600 font-semibold flex items-center gap-1.5">
+              <span class="text-blue-500 text-sm">💎</span> Total Item
+            </span>
+            <span id="metricTotal" class="text-3xl font-extrabold text-slate-900 block mt-1">0</span>
+          </div>
+          <!-- Decorative SVG wave at bottom -->
+          <svg class="w-full h-5 text-blue-200/60 mt-1" viewBox="0 0 100 25" preserveAspectRatio="none" fill="currentColor">
+            <path d="M0,15 C30,5 60,25 100,10 L100,25 L0,25 Z"></path>
+          </svg>
         </div>
 
         <!-- Organic Metric -->
-        <div class="bg-emerald-950/20 border border-emerald-800/30 rounded-xl p-3.5 flex flex-col">
-          <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">🌿 Organik</span>
-          <span id="metricOrganic" class="text-2xl font-bold font-mono text-emerald-300 mt-1">0</span>
-          <span class="text-[10px] text-emerald-500 mt-0.5">Posisi #1 - #10</span>
+        <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <span class="text-xs text-emerald-800 font-semibold flex items-center gap-1.5">
+              <span>🌿</span> Organik
+            </span>
+            <span id="metricOrganic" class="text-3xl font-extrabold text-emerald-900 block mt-1">0</span>
+          </div>
+          <span class="text-[11px] text-slate-500 mt-2">Posisi #1 – #10</span>
         </div>
 
         <!-- Ads Metric -->
-        <div class="bg-amber-950/20 border border-amber-800/30 rounded-xl p-3.5 flex flex-col">
-          <span class="text-xs text-amber-400 font-medium flex items-center gap-1">🟧 Google Ads</span>
-          <span id="metricAds" class="text-2xl font-bold font-mono text-amber-300 mt-1">0</span>
-          <span class="text-[10px] text-amber-500 mt-0.5">Iklan Atas & Bawah</span>
+        <div class="bg-amber-50/60 border border-amber-100 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <span class="text-xs text-amber-800 font-semibold flex items-center gap-1.5">
+              <span class="text-amber-500">🔺</span> Google Ads
+            </span>
+            <span id="metricAds" class="text-3xl font-extrabold text-amber-900 block mt-1">0</span>
+          </div>
+          <span class="text-[11px] text-slate-500 mt-2">Iklan Atas &amp; Bawah</span>
         </div>
 
         <!-- Maps Metric -->
-        <div class="bg-red-950/20 border border-red-800/30 rounded-xl p-3.5 flex flex-col">
-          <span class="text-xs text-red-400 font-medium flex items-center gap-1">🗺️ Google Maps</span>
-          <span id="metricMaps" class="text-2xl font-bold font-mono text-red-300 mt-1">0</span>
-          <span class="text-[10px] text-red-500 mt-0.5">Local 3-Pack Bisnis</span>
+        <div class="bg-rose-50/60 border border-rose-100 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <span class="text-xs text-rose-800 font-semibold flex items-center gap-1.5">
+              <span>📍</span> Google Maps
+            </span>
+            <span id="metricMaps" class="text-3xl font-extrabold text-rose-900 block mt-1">0</span>
+          </div>
+          <span class="text-[11px] text-slate-500 mt-2">Local 3-Pack Bisnis</span>
         </div>
 
         <!-- AI / PAA Metric -->
-        <div class="bg-purple-950/20 border border-purple-800/30 rounded-xl p-3.5 flex flex-col">
-          <span class="text-xs text-purple-400 font-medium flex items-center gap-1">🟣 AI & PAA</span>
-          <span id="metricAi" class="text-2xl font-bold font-mono text-purple-300 mt-1">0</span>
-          <span class="text-[10px] text-purple-500 mt-0.5">Overview & Tanya</span>
+        <div class="bg-purple-50/60 border border-purple-100 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <span class="text-xs text-purple-800 font-semibold flex items-center gap-1.5">
+              <span>✨</span> AI &amp; PAA
+            </span>
+            <span id="metricAi" class="text-3xl font-extrabold text-purple-900 block mt-1">0</span>
+          </div>
+          <span class="text-[11px] text-slate-500 mt-2">Overview &amp; Tanya</span>
         </div>
       </div>
 
       <!-- Filters & Export Toolbar -->
-      <div
-        class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
         <!-- Category Filter Pills -->
         <div class="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
           <button type="button" data-filter="ALL"
-            class="cat-pill active px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">
+            class="cat-pill active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-xs transition">
             Semua (<span id="catCountAll">0</span>)
           </button>
           <button type="button" data-filter="ORGANIC"
-            class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-emerald-900/50 hover:text-emerald-300 transition">
+            class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
             🌿 Organik (<span id="catCountOrganic">0</span>)
           </button>
           <button type="button" data-filter="ADS"
-            class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-amber-900/50 hover:text-amber-300 transition">
-            🟧 Ads (<span id="catCountAds">0</span>)
+            class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+            🔺 Ads (<span id="catCountAds">0</span>)
           </button>
           <button type="button" data-filter="MAPS"
-            class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-red-900/50 hover:text-red-300 transition">
-            🗺️ Maps (<span id="catCountMaps">0</span>)
+            class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+            📍 Maps (<span id="catCountMaps">0</span>)
           </button>
           <button type="button" data-filter="AI_OVERVIEW"
-            class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-purple-900/50 hover:text-purple-300 transition">
-            🟣 AI / PAA (<span id="catCountAi">0</span>)
+            class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition">
+            ✨ AI / PAA (<span id="catCountAi">0</span>)
           </button>
         </div>
 
         <!-- Search / Domain Filter & Export Buttons -->
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-          <div class="relative w-full md:w-56">
-            <input type="text" id="searchFilter" placeholder="Cari domain (mis: mesinprinting.id)..."
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans">
-            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">🔎</span>
+          <div class="relative w-full md:w-64">
+            <input type="text" id="searchFilter" placeholder="Cari domain, keyword, atau judul..."
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans">
+            <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
           </div>
 
           <!-- Export CSV -->
           <a id="btnExportCsv" href="/api/scan/export/csv" download
-            class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm shadow-emerald-600/30 whitespace-nowrap"
+            class="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition flex items-center gap-1 shadow-xs whitespace-nowrap"
             title="Download Spreadsheet Excel / CSV">
             <span>📊 Excel / CSV</span>
           </a>
 
           <!-- Export JSON -->
           <a id="btnExportJson" href="/api/scan/export/json" download
-            class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition flex items-center gap-1 whitespace-nowrap"
+            class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium transition flex items-center gap-1 whitespace-nowrap"
             title="Download JSON Data">
-            <span>JSON</span>
+            <span>&lt;/&gt; JSON</span>
           </a>
         </div>
       </div>
 
       <!-- Main Results Data Table Card -->
-      <div
-        class="bg-slate-800/90 border border-slate-700/80 rounded-2xl shadow-xl overflow-hidden flex-1 flex flex-col min-h-[450px]">
-
+      <div class="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden flex-1 flex flex-col min-h-[450px]">
         <div class="overflow-x-auto flex-1">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr
-                class="bg-slate-900/80 border-b border-slate-700 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
                 <th class="py-3 px-3.5 w-12 text-center">#</th>
-                <th class="py-3 px-3.5 w-28">Kategori</th>
+                <th class="py-3 px-3.5 w-32">Kategori</th>
                 <th class="py-3 px-3.5 w-24">Device</th>
-                <th class="py-3 px-3.5 w-44">Kata Kunci</th>
-                <th class="py-3 px-3.5">Judul, Domain & Cuplikan Halaman</th>
+                <th class="py-3 px-3.5 w-48">Kata Kunci</th>
+                <th class="py-3 px-3.5">Judul, Domain &amp; Cuplikan Halaman</th>
                 <th class="py-3 px-3.5 w-20 text-center">Rank</th>
               </tr>
             </thead>
-            <tbody id="resultsTableBody" class="divide-y divide-slate-700/50 text-xs">
+            <tbody id="resultsTableBody" class="divide-y divide-slate-100 text-xs">
               <tr>
                 <td colspan="6" class="py-16 text-center text-slate-400">
                   <div class="max-w-sm mx-auto space-y-2">
                     <span class="text-4xl block">📊</span>
-                    <p class="font-semibold text-slate-300">Belum ada data hasil pemindaian</p>
-                    <p class="text-xs text-slate-500">Ketik kata kunci di sebelah kiri, pilih perangkat (Desktop,
-                      Mobile, Tablet), lalu klik <strong>Mulai Scan Sekarang</strong>.</p>
+                    <p class="font-semibold text-slate-700">Belum ada data hasil pemindaian</p>
+                    <p class="text-xs text-slate-500">Ketik kata kunci di sebelah kiri, pilih perangkat (Desktop, Mobile, Tablet), lalu klik <strong>Mulai Scan Sekarang</strong>.</p>
                   </div>
                 </td>
               </tr>
@@ -464,10 +467,9 @@
         </div>
 
         <!-- Table Footer Pagination / Count Info -->
-        <div
-          class="p-3 bg-slate-900/60 border-t border-slate-700/80 flex items-center justify-between text-xs text-slate-400">
+        <div class="p-3 bg-slate-50/60 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
           <span id="tableSummary">Menampilkan 0 hasil</span>
-          <span class="text-[11px] text-slate-500">Google SERP Page 1 Only • Windows Automation</span>
+          <span class="text-[11px] text-slate-400">Google SERP Page 1 Only • Windows Automation</span>
         </div>
 
       </div>
@@ -477,24 +479,22 @@
   </main>
 
   <!-- Screenshot Preview Modal (For Boss / Reports) -->
-  <div id="screenshotModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 transition-all">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+  <div id="screenshotModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 transition-all">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
       
       <!-- Modal Header -->
-      <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center text-lg">
-            📷
-          </div>
+      <div class="px-5 py-3.5 border-b border-slate-100 bg-white flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-lg">🖼️</span>
           <div>
-            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
               <span>Bukti Screenshot Hasil Scan Google</span>
-              <span id="modalDeviceBadge" class="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-blue-950 text-blue-300 border border-blue-800">Desktop</span>
+              <span id="modalDeviceBadge" class="text-[11px] px-2 py-0.5 rounded-full font-mono font-medium bg-blue-50 text-blue-700 border border-blue-200">Desktop</span>
             </h3>
-            <p id="modalKeywordLabel" class="text-xs text-slate-400 font-mono mt-0.5">Kata kunci: "mesin digital printing"</p>
+            <p id="modalKeywordLabel" class="text-xs text-slate-500 font-mono mt-0.5">Kata kunci: "mesin digital printing"</p>
           </div>
         </div>
-        <button id="btnCloseModal" type="button" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition">
+        <button id="btnCloseModal" type="button" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -502,23 +502,23 @@
       </div>
 
       <!-- Modal Body (Scrollable Image) -->
-      <div class="flex-1 overflow-y-auto p-4 bg-slate-950/70 flex justify-center items-start">
+      <div class="flex-1 overflow-y-auto p-4 bg-slate-100/70 flex justify-center items-start">
         <div class="relative max-w-full">
-          <img id="modalScreenshotImg" src="" alt="Bukti Screenshot Google SERP" class="max-w-full rounded-xl border border-slate-700 shadow-2xl transition">
+          <img id="modalScreenshotImg" src="" alt="Bukti Screenshot Google SERP" class="max-w-full rounded-xl border border-slate-300 shadow-xl transition">
         </div>
       </div>
 
       <!-- Modal Footer Action Buttons -->
-      <div class="px-5 py-3 border-t border-slate-800 bg-slate-900 flex items-center justify-between">
-        <span class="text-[11px] text-slate-400">💡 Anda bisa mengunduh gambar ini sebagai lampiran laporan ke atasan.</span>
+      <div class="px-5 py-3 border-t border-slate-200 bg-white flex items-center justify-between">
+        <span class="text-[11px] text-slate-500">💡 Anda bisa mengunduh gambar ini sebagai lampiran laporan ke atasan.</span>
         <div class="flex items-center gap-2">
-          <a id="modalDownloadBtn" href="#" download class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition flex items-center gap-1.5">
+          <a id="modalDownloadBtn" href="#" download class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5">
             <span>⬇ Unduh Gambar (JPG)</span>
           </a>
-          <a id="modalOpenTabBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition flex items-center gap-1.5">
+          <a id="modalOpenTabBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-medium transition flex items-center gap-1.5">
             <span>🔍 Buka Tab Baru</span>
           </a>
-          <button id="modalCloseBtnBottom" type="button" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition">
+          <button id="modalCloseBtnBottom" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
             Tutup
           </button>
         </div>
@@ -528,7 +528,7 @@
   </div>
 
   <!-- Client-side script -->
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 
 </html>

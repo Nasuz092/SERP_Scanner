@@ -122,7 +122,8 @@
       return;
     }
     clickInfoBadge.classList.remove('hidden');
-    clickInfoBadge.textContent = `🖱️ ${clickInfo.totalClicked || 0} klik / ${clickInfo.totalSkipped || 0} dilewati`;
+    clickInfoBadge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-mono';
+    clickInfoBadge.textContent = `:= ± ${clickInfo.totalClicked || 0} klik / ${clickInfo.totalSkipped || 0} dilewati`;
   }
 
   // Helper: Count keywords in textarea
@@ -256,9 +257,9 @@
       btnStartScan.classList.add('opacity-50', 'cursor-not-allowed');
       btnStopScan.disabled = false;
       sessionStatusText.textContent = 'Memindai...';
-      sessionStatusPill.className = 'flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-950/60 border border-blue-500/40 text-blue-300 status-pulse';
+      sessionStatusPill.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 border border-blue-200 text-blue-700 status-pulse';
       currentStatusIndicator.textContent = 'Proses Berjalan';
-      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30';
+      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200';
 
       if (!startTime) {
         startTime = Date.now();
@@ -270,9 +271,9 @@
       btnStartScan.classList.remove('opacity-50', 'cursor-not-allowed');
       btnStopScan.disabled = true;
       sessionStatusText.textContent = 'Selesai';
-      sessionStatusPill.className = 'flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
-      currentStatusIndicator.textContent = 'Selesai';
-      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      sessionStatusPill.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700';
+      currentStatusIndicator.textContent = '✓ Selesai';
+      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
       stopTimer();
     } else if (status === 'stopped') {
       isScanning = false;
@@ -280,9 +281,9 @@
       btnStartScan.classList.remove('opacity-50', 'cursor-not-allowed');
       btnStopScan.disabled = true;
       sessionStatusText.textContent = 'Dihentikan';
-      sessionStatusPill.className = 'flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-950/60 border border-amber-500/40 text-amber-300';
+      sessionStatusPill.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 border border-amber-200 text-amber-800';
       currentStatusIndicator.textContent = 'Dihentikan';
-      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+      currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200';
       stopTimer();
     } else {
       isScanning = false;
@@ -337,54 +338,49 @@
     if (item.isClicked) {
       const isTarget = item.isTarget || (item.clickDetails && item.clickDetails.includes('Target'));
       return `
-        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-          <div class="p-2 rounded-lg ${isTarget ? 'bg-amber-950/80 border border-amber-500 text-amber-200' : 'bg-emerald-950/70 border border-emerald-600/70 text-emerald-300'}">
-            <div class="flex items-center gap-1.5 font-bold text-[11px]">
-              <span>${isTarget ? '🎯 IKLAN TARGET UTAMA BERHASIL DIKLIK' : '🖱️ IKLAN KOMPETITOR BERHASIL DIKLIK'}</span>
-            </div>
-            <span class="text-[10px] ${isTarget ? 'text-amber-300' : 'text-emerald-400'} block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
+        <div class="mt-2 p-2.5 rounded-xl ${isTarget ? 'bg-amber-50/90 border border-amber-300 text-amber-950' : 'bg-emerald-50/90 border border-emerald-200 text-emerald-950'}">
+          <div class="flex items-center gap-1.5 font-bold text-xs ${isTarget ? 'text-amber-900' : 'text-emerald-800'}">
+            <span>${isTarget ? '🎯 IKLAN TARGET UTAMA BERHASIL DIKLIK' : '🖱️ IKLAN KOMPETITOR BERHASIL DIKLIK'}</span>
           </div>
+          <span class="text-[11px] ${isTarget ? 'text-amber-700' : 'text-emerald-600'} block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
         </div>
       `;
     }
     if (item.clickStatus === 'SKIPPED_OWN_DOMAIN') {
       return `
-        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-          <div class="p-2 rounded-lg bg-blue-950/70 border border-blue-600/70 text-blue-300">
-            <div class="flex items-center gap-1.5 font-bold text-[11px]">
-              <span>🛡️ DILEWATI (DOMAIN SENDIRI)</span>
-            </div>
-            <span class="text-[10px] text-blue-400 block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
+        <div class="mt-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/90 text-blue-900">
+          <div class="flex items-center gap-1.5 font-bold text-xs text-blue-800">
+            <span>🛡️ DILEWATI (DOMAIN SENDIRI)</span>
           </div>
+          <span class="text-[11px] text-blue-600 block mt-0.5">Domain ini milik ${escapeHtml(item.domain || 'mesinprinting.id')}</span>
         </div>
       `;
     }
     if (item.clickStatus === 'SKIPPED_BOTTOM_DISABLED') {
       return `
-        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-          <div class="p-2 rounded-lg bg-amber-950/40 border border-amber-700/50 text-amber-300">
-            <div class="flex items-center gap-1.5 font-semibold text-[11px]">
-              <span>ℹ️ Sponsor Bawah (Belum Diklik)</span>
-            </div>
-            <span class="text-[10px] text-amber-400/80 block mt-0.5">Iklan ini dilewati karena opsi 'Klik iklan bawah' belum dicentang di panel kiri.</span>
-          </div>
+        <div class="mt-2 p-2 rounded-xl bg-amber-50/70 border border-amber-200 text-amber-900 text-[11px]">
+          <span class="font-semibold text-amber-800">ℹ️ Sponsor Bawah (Belum Diklik)</span>
+          <span class="text-[10px] text-amber-700 block mt-0.5">Iklan dilewati karena opsi 'Klik iklan bawah' belum dicentang.</span>
+        </div>
+      `;
+    }
+    if (item.clickStatus === 'SKIPPED_NOT_TARGET') {
+      return `
+        <div class="mt-2 p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-[11px]">
+          <span>ℹ️ Dilewati (Bukan target yang di-whitelist)</span>
         </div>
       `;
     }
     if (item.clickStatus === 'SKIPPED_LIMIT') {
       return `
-        <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-          <div class="p-1.5 rounded bg-slate-800 border border-slate-700 text-slate-400 text-[10px]">
-            <span>⚠️ Dilewati (melebihi batas maksimal klik per keyword)</span>
-          </div>
+        <div class="mt-2 p-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 text-[10px]">
+          <span>⚠️ Dilewati (Melebihi batas maksimal klik per keyword)</span>
         </div>
       `;
     }
     return `
-      <div class="mt-2 pt-1.5 border-t border-slate-700/60">
-        <div class="text-[10px] text-slate-500 font-mono mt-1">
-          <span>⚪ Mode klik iklan dinonaktifkan</span>
-        </div>
+      <div class="mt-2 pt-1 border-t border-slate-100">
+        <span class="text-[10px] text-slate-400 font-mono">⚪ Mode klik iklan dinonaktifkan</span>
       </div>
     `;
   }
@@ -478,7 +474,7 @@
       // Highlight domain if matches search
       const isDomainMatch = searchTerm && item.domain && item.domain.toLowerCase().includes(searchTerm.toLowerCase());
       const domainDisplay = item.domain ? `
-        <span class="inline-flex items-center gap-1 font-mono text-[11px] ${isDomainMatch ? 'text-amber-300 bg-amber-950/60 px-1 rounded font-bold' : 'text-blue-400'}">
+        <span class="inline-flex items-center gap-1 font-mono text-[11px] ${isDomainMatch ? 'text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-bold' : 'text-slate-500'}">
           🌐 ${escapeHtml(item.domain)}
         </span>
       ` : '';
@@ -488,58 +484,58 @@
       const safeUrl = item.url && item.url !== '#' && item.url.startsWith('http') ? item.url : null;
 
       const titleHtml = safeUrl
-        ? `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-100 hover:text-blue-400 transition text-sm leading-snug line-clamp-2">${escapeHtml(item.title || '(Tanpa Judul)')}</a>`
-        : `<span class="font-semibold text-slate-100 text-sm leading-snug line-clamp-2">${escapeHtml(item.title || '(Tanpa Judul)')}</span>`;
+        ? `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 hover:underline transition text-sm leading-snug line-clamp-2">${escapeHtml(item.title || '(Tanpa Judul)')}</a>`
+        : `<span class="font-bold text-slate-800 text-sm leading-snug line-clamp-2">${escapeHtml(item.title || '(Tanpa Judul)')}</span>`;
 
       return `
-        <tr class="hover:bg-slate-700/30 transition">
-          <td class="py-3 px-3.5 text-center text-slate-500 font-mono">${idx + 1}</td>
+        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+          <td class="py-3.5 px-3.5 text-center text-slate-400 font-mono font-semibold">${idx + 1}</td>
           
           <!-- Category -->
-          <td class="py-3 px-3.5">
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold ${catBadgeClass}">
+          <td class="py-3.5 px-3.5">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${catBadgeClass}">
               <span>${catIcon}</span>
               <span>${catText}</span>
             </span>
-            <span class="block text-[10px] text-slate-400 mt-1">${escapeHtml(item.placement || '')}</span>
+            <span class="block text-[10px] text-slate-500 mt-1 font-medium">${escapeHtml(item.placement || '')}</span>
           </td>
 
           <!-- Device -->
-          <td class="py-3 px-3.5">
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium ${devBadgeClass}">
+          <td class="py-3.5 px-3.5">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${devBadgeClass}">
               <span>${devIcon}</span>
               <span class="capitalize">${escapeHtml(item.device || '')}</span>
             </span>
           </td>
 
           <!-- Keyword -->
-          <td class="py-3 px-3.5">
-            <span class="font-medium text-slate-200 block">${escapeHtml(item.keyword || '')}</span>
+          <td class="py-3.5 px-3.5">
+            <span class="font-semibold text-slate-800 block text-xs">${escapeHtml(item.keyword || '')}</span>
             ${item.screenshot ? `
-              <button type="button" data-ss="${escapeHtml(item.screenshot)}" data-kw="${escapeHtml(item.keyword || '')}" data-dev="${escapeHtml(item.device || '')}" class="btn-view-ss inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950/90 hover:bg-blue-900 border border-blue-700/60 text-blue-300 transition shadow-sm cursor-pointer">
-                <span>📷 Bukti SS</span>
+              <button type="button" data-ss="${escapeHtml(item.screenshot)}" data-kw="${escapeHtml(item.keyword || '')}" data-dev="${escapeHtml(item.device || '')}" class="btn-view-ss inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition shadow-xs cursor-pointer">
+                <span>🖼️ Bukti SS</span>
               </button>
             ` : ''}
           </td>
 
           <!-- Title, Domain & Snippet -->
-          <td class="py-3 px-3.5 max-w-md">
+          <td class="py-3.5 px-3.5 max-w-md">
             <div class="space-y-1">
               ${titleHtml}
               <div>${domainDisplay}</div>
               
               ${item.category === 'AI_OVERVIEW' ? `
-                <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-700/50 mt-1.5 space-y-2">
-                  <div class="text-[11px] font-bold text-purple-300 flex items-center gap-1.5">
-                    <span>🤖 Ringkasan Lengkap Jawaban AI Google:</span>
+                <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 mt-1.5 space-y-1.5">
+                  <div class="text-[11px] font-bold text-purple-800 flex items-center gap-1.5">
+                    <span>🤖 Ringkasan Jawaban AI Google:</span>
                   </div>
-                  <p class="text-[11px] text-purple-100 whitespace-pre-line leading-relaxed font-sans">
+                  <p class="text-[11px] text-purple-950 whitespace-pre-line leading-relaxed font-sans">
                     ${escapeHtml(item.snippet || '')}
                   </p>
                   ${sitelinksHtml}
                 </div>
               ` : `
-                <p class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed">
+                <p class="text-[11px] text-slate-600 line-clamp-3 leading-relaxed">
                   ${escapeHtml(item.snippet || '')}
                 </p>
                 ${sitelinksHtml}
@@ -550,8 +546,8 @@
           </td>
 
           <!-- Rank -->
-          <td class="py-3 px-3.5 text-center">
-            <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 font-mono font-bold text-sm text-slate-200">
+          <td class="py-3.5 px-3.5 text-center">
+            <span class="inline-block px-2.5 py-1 rounded-xl bg-slate-900 text-white font-mono font-bold text-xs shadow-xs">
               #${item.rank !== undefined ? item.rank : '-'}
             </span>
           </td>
