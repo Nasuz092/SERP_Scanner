@@ -132,3 +132,19 @@ code, kbd, samp, pre, .font-mono, #logContainer {
   scrollbar-width: thin;
   scrollbar-color: #475569 #0f172a;
 }
+
+/* Custom Dropdown Animation */
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#exportDropdownMenu:not(.hidden) {
+  animation: dropdownFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -828,7 +828,10 @@
     });
   }
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeScreenshotModal();
+    if (e.key === 'Escape') {
+      closeScreenshotModal();
+      closeExportMenu();
+    }
   });
 
   // Delegate click for .btn-view-ss in table
@@ -843,6 +846,51 @@
       }
     });
   }
+
+  // === Custom Export Dropdown Menu ===
+  const btnExportMenu = document.getElementById('btnExportMenu');
+  const exportDropdownMenu = document.getElementById('exportDropdownMenu');
+  const exportChevron = document.getElementById('exportChevron');
+  const exportDropdownWrapper = document.getElementById('exportDropdownWrapper');
+
+  function toggleExportMenu() {
+    if (!exportDropdownMenu) return;
+    const isHidden = exportDropdownMenu.classList.contains('hidden');
+    if (isHidden) {
+      exportDropdownMenu.classList.remove('hidden');
+      if (btnExportMenu) btnExportMenu.setAttribute('aria-expanded', 'true');
+      if (exportChevron) exportChevron.classList.add('rotate-180');
+    } else {
+      closeExportMenu();
+    }
+  }
+
+  function closeExportMenu() {
+    if (!exportDropdownMenu) return;
+    exportDropdownMenu.classList.add('hidden');
+    if (btnExportMenu) btnExportMenu.setAttribute('aria-expanded', 'false');
+    if (exportChevron) exportChevron.classList.remove('rotate-180');
+  }
+
+  if (btnExportMenu) {
+    btnExportMenu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleExportMenu();
+    });
+  }
+
+  // Close when clicking anywhere outside
+  document.addEventListener('click', (e) => {
+    if (exportDropdownWrapper && !exportDropdownWrapper.contains(e.target)) {
+      closeExportMenu();
+    }
+  });
+
+  // Close dropdown upon selecting an export format
+  const btnExportCsv = document.getElementById('btnExportCsv');
+  const btnExportJson = document.getElementById('btnExportJson');
+  if (btnExportCsv) btnExportCsv.addEventListener('click', () => closeExportMenu());
+  if (btnExportJson) btnExportJson.addEventListener('click', () => closeExportMenu());
 
   // Init
   updateKeywordCount();

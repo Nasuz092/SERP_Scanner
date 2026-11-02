@@ -17,6 +17,7 @@ namespace GoogleSerpScannerApp
         private Button btnRestartServer;
         private TextBox txtLogs;
         private Panel statusPanel;
+        private const string Host = "127.0.0.1";
         private const int Port = 4321;
         private string appDir;
 
@@ -95,7 +96,7 @@ namespace GoogleSerpScannerApp
 
             lblUrl = new Label
             {
-                Text = "Alamat Web: http://localhost:" + Port,
+                Text = "Alamat Web: http://" + Host + ":" + Port,
                 Font = new Font("Segoe UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point),
                 ForeColor = Color.FromArgb(148, 163, 184),
                 AutoSize = true,
@@ -212,7 +213,7 @@ namespace GoogleSerpScannerApp
                 lblStatus.Text = "Server Aktif (Online)";
                 lblStatus.ForeColor = Color.FromArgb(52, 211, 153);
                 statusPanel.BackColor = Color.FromArgb(20, 50, 40);
-                lblUrl.Text = "Dashboard siap diakses di: http://localhost:" + Port;
+                lblUrl.Text = "Dashboard siap diakses di: http://" + Host + ":" + Port;
             }
             else
             {
@@ -340,7 +341,7 @@ namespace GoogleSerpScannerApp
         {
             try
             {
-                Process.Start("http://localhost:" + Port);
+                Process.Start("http://" + Host + ":" + Port);
             }
             catch (Exception ex)
             {

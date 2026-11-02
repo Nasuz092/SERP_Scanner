@@ -6,6 +6,8 @@ import { createBrowser, scanKeywordOnDevice, DEVICE_PROFILES } from './scanner.j
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const HOST = process.env.HOST || '0.0.0.0';
+const ACCESS_HOST = process.env.ACCESS_HOST || '127.0.0.1';
 const PORT = process.env.PORT || 4321;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const SCREENSHOTS_DIR = path.join(PUBLIC_DIR, 'screenshots');
@@ -582,10 +584,12 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
+  const displayHost = ACCESS_HOST || (HOST === '0.0.0.0' ? '127.0.0.1' : HOST);
   console.log(`=======================================================`);
-  console.log(`🚀 Google SERP Scanner siap berjalan di Windows!`);
-  console.log(`🌐 Buka di browser: http://localhost:${PORT}`);
-  console.log(`🖱️ Fitur klik iklan: ${scanSession.clickAds ? 'AKTIF' : 'nonaktif (default)'}`);
+  console.log(`Google SERP Scanner siap berjalan di Windows!`);
+  console.log(`Buka di browser: http://${displayHost}:${PORT}`);
+  console.log(`Bisa juga via IPv6: http://[::1]:${PORT}`);
+  console.log(`Fitur klik iklan: ${scanSession.clickAds ? 'AKTIF' : 'nonaktif (default)'}`);
   console.log(`=======================================================`);
 });
