@@ -2,7 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -10,6 +12,15 @@ namespace GoogleSerpScannerApp
 {
     public class MainForm : Form
     {
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDpiAwarenessContext(int dpiContext);
+
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(int awareness);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
+
         private Process nodeProcess;
         private Label lblStatus;
         private Label lblUrl;
@@ -28,6 +39,18 @@ namespace GoogleSerpScannerApp
         [STAThread]
         public static void Main()
         {
+            // Enable True Per-Monitor V2 High-DPI Awareness for razor-sharp HD rendering
+            try
+            {
+                // -4 = DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (Windows 10 1703+)
+                SetProcessDpiAwarenessContext(-4);
+            }
+            catch
+            {
+                try { SetProcessDpiAwareness(2); } // PROCESS_PER_MONITOR_DPI_AWARE
+                catch { try { SetProcessDPIAware(); } catch { } }
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -60,6 +83,7 @@ namespace GoogleSerpScannerApp
             this.BackColor = Color.FromArgb(248, 250, 252);
             this.ForeColor = Color.FromArgb(15, 23, 42);
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
             this.DoubleBuffered = true;
 
             // Set Application Window Icon (Google Search Magnifier)
@@ -495,7 +519,10 @@ namespace GoogleSerpScannerApp
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             int w = this.Width;
             int h = this.Height;
@@ -506,17 +533,10 @@ namespace GoogleSerpScannerApp
                 g.FillRectangle(bg, 0, 0, w, h);
             }
 
-            // Draw decorative soft light-blue wavy curves at the top-right
+            // Draw decorative soft light-blue wavy curves using smooth cubic beziers
             using (GraphicsPath wavePath = new GraphicsPath())
             {
-                Point[] pts1 = new Point[]
-                {
-                    new Point(w - 240, 0),
-                    new Point(w - 180, 20),
-                    new Point(w - 130, h - 10),
-                    new Point(w, h)
-                };
-                wavePath.AddCurve(pts1);
+                wavePath.AddBezier(w - 240, 0, w - 170, 15, w - 120, h - 15, w, h);
                 wavePath.AddLine(w, h, w, 0);
                 wavePath.CloseFigure();
 
@@ -528,14 +548,7 @@ namespace GoogleSerpScannerApp
 
             using (GraphicsPath wavePath2 = new GraphicsPath())
             {
-                Point[] pts2 = new Point[]
-                {
-                    new Point(w - 150, 0),
-                    new Point(w - 95, 25),
-                    new Point(w - 40, h - 5),
-                    new Point(w, h)
-                };
-                wavePath2.AddCurve(pts2);
+                wavePath2.AddBezier(w - 150, 0, w - 90, 20, w - 40, h - 10, w, h);
                 wavePath2.AddLine(w, h, w, 0);
                 wavePath2.CloseFigure();
 
@@ -558,10 +571,11 @@ namespace GoogleSerpScannerApp
             }
 
             // Draw Magnifying Glass inside squircle
-            using (Pen pen = new Pen(Color.White, 2.6f))
+            using (Pen pen = new Pen(Color.White, 2.5f))
             {
                 pen.StartCap = LineCap.Round;
                 pen.EndCap = LineCap.Round;
+                pen.LineJoin = LineJoin.Round;
                 // Circle
                 g.DrawEllipse(pen, iconX + 13, iconY + 13, 14, 14);
                 // Handle
@@ -617,7 +631,10 @@ namespace GoogleSerpScannerApp
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             // Draw rounded background & border
             Rectangle rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
@@ -648,6 +665,7 @@ namespace GoogleSerpScannerApp
             {
                 pen.StartCap = LineCap.Round;
                 pen.EndCap = LineCap.Round;
+                pen.LineJoin = LineJoin.Round;
 
                 if (IsRunning)
                 {
@@ -703,7 +721,10 @@ namespace GoogleSerpScannerApp
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             Rectangle rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
             using (GraphicsPath path = GetRoundedRect(rect, CornerRadius))
@@ -737,7 +758,7 @@ namespace GoogleSerpScannerApp
             }
 
             // Draw Running / Stopped pill badge directly on top right
-            int pillW = 88;
+            int pillW = 90;
             int pillH = 26;
             int pillX = this.Width - pillW - 14;
             int pillY = 11;
@@ -747,7 +768,7 @@ namespace GoogleSerpScannerApp
             Color textCol = IsRunning ? Color.FromArgb(4, 120, 87) : Color.FromArgb(225, 29, 72);
             Color dotCol = IsRunning ? Color.FromArgb(16, 185, 129) : Color.FromArgb(244, 63, 94);
 
-            using (GraphicsPath pillPath = GetRoundedRect(new Rectangle(pillX, pillY, pillW, pillH), 12))
+            using (GraphicsPath pillPath = GetRoundedRect(new Rectangle(pillX, pillY, pillW, pillH), 13))
             {
                 using (SolidBrush pb = new SolidBrush(fill))
                 {
@@ -762,7 +783,7 @@ namespace GoogleSerpScannerApp
             // Dot
             using (SolidBrush dotBrush = new SolidBrush(dotCol))
             {
-                g.FillEllipse(dotBrush, pillX + 10, pillY + (pillH - 8) / 2, 8, 8);
+                g.FillEllipse(dotBrush, pillX + 11, pillY + (pillH - 8) / 2, 8, 8);
             }
 
             // Text
@@ -770,7 +791,7 @@ namespace GoogleSerpScannerApp
             using (SolidBrush ptb = new SolidBrush(textCol))
             {
                 string text = IsRunning ? "Running" : "Stopped";
-                g.DrawString(text, pf, ptb, pillX + 24, pillY + (pillH - 16) / 2);
+                g.DrawString(text, pf, ptb, pillX + 25, pillY + (pillH - 16) / 2);
             }
         }
 
@@ -806,7 +827,9 @@ namespace GoogleSerpScannerApp
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             Rectangle rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
             using (GraphicsPath path = GetRoundedRect(rect, CornerRadius))
@@ -893,7 +916,10 @@ namespace GoogleSerpScannerApp
         protected override void OnPaint(PaintEventArgs pevent)
         {
             Graphics g = pevent.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             // Clear button background to match form
             using (SolidBrush parentBg = new SolidBrush(Color.FromArgb(248, 250, 252)))
@@ -951,8 +977,15 @@ namespace GoogleSerpScannerApp
                 int iconX = 24;
                 using (Pen pen = new Pen(Color.White, 2f))
                 {
-                    // Monitor screen
-                    g.DrawRectangle(pen, iconX, centerY - 9, 18, 12);
+                    pen.StartCap = LineCap.Round;
+                    pen.EndCap = LineCap.Round;
+                    pen.LineJoin = LineJoin.Round;
+
+                    // Monitor screen rounded
+                    using (GraphicsPath screen = GetRoundedRect(new Rectangle(iconX, centerY - 9, 18, 12), 2))
+                    {
+                        g.DrawPath(pen, screen);
+                    }
                     // Stand base
                     g.DrawLine(pen, iconX + 5, centerY + 7, iconX + 13, centerY + 7);
                     g.DrawLine(pen, iconX + 9, centerY + 3, iconX + 9, centerY + 7);
@@ -983,6 +1016,10 @@ namespace GoogleSerpScannerApp
 
                 using (Pen pen = new Pen(Color.FromArgb(30, 41, 59), 1.8f))
                 {
+                    pen.StartCap = LineCap.Round;
+                    pen.EndCap = LineCap.Round;
+                    pen.LineJoin = LineJoin.Round;
+
                     // Folder shape
                     g.DrawLine(pen, iconX, centerY - 6, iconX + 6, centerY - 6);
                     g.DrawLine(pen, iconX + 6, centerY - 8, iconX + 12, centerY - 8);
@@ -998,18 +1035,33 @@ namespace GoogleSerpScannerApp
             }
             else if (ButtonType == ButtonVariant.SecondaryRestart)
             {
-                // Refresh icon (circular arrow)
+                // Refresh icon (circular arrow - mathematically exact geometry)
                 int iconX = (this.Width - 120) / 2;
                 if (iconX < 18) iconX = 18;
 
-                using (Pen pen = new Pen(Color.FromArgb(30, 41, 59), 1.8f))
+                int cx = iconX + 7;
+                int cy = centerY;
+                float r = 6.5f;
+
+                using (Pen pen = new Pen(Color.FromArgb(30, 41, 59), 1.9f))
                 {
                     pen.StartCap = LineCap.Round;
                     pen.EndCap = LineCap.Round;
-                    g.DrawArc(pen, iconX, centerY - 8, 14, 14, 45, 270);
-                    // Arrowhead
-                    g.DrawLine(pen, iconX + 11, centerY - 9, iconX + 14, centerY - 5);
-                    g.DrawLine(pen, iconX + 11, centerY - 1, iconX + 14, centerY - 5);
+                    pen.LineJoin = LineJoin.Round;
+
+                    // Clockwise arc from 45 deg to 320 deg
+                    g.DrawArc(pen, cx - r, cy - r, r * 2, r * 2, 45, 275);
+
+                    // Tip at 320 degrees
+                    float tipX = cx + r * (float)Math.Cos(320 * Math.PI / 180.0);
+                    float tipY = cy + r * (float)Math.Sin(320 * Math.PI / 180.0);
+
+                    PointF tip = new PointF(tipX, tipY);
+                    PointF w1 = new PointF(tipX - 4.5f, tipY - 0.7f);
+                    PointF w2 = new PointF(tipX + 0.1f, tipY - 4.5f);
+
+                    g.DrawLine(pen, w1, tip);
+                    g.DrawLine(pen, w2, tip);
                 }
 
                 using (Font font = new Font("Segoe UI", 9f, FontStyle.Bold))
