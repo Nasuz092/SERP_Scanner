@@ -241,8 +241,12 @@
     progressDetail.textContent = `${completedTasks || 0} dari ${totalTasks || 0} tugas selesai`;
 
     if (currentKeyword) {
-      const devIcon = currentDevice === 'mobile' ? '📱 Mobile' : (currentDevice === 'tablet' ? '📟 Tablet' : '🖥️ Desktop');
-      currentTaskLabel.textContent = `Sedang memindai: "${currentKeyword}" (${devIcon})`;
+      const devImg = currentDevice === 'mobile'
+        ? '<img src="icons/mobile.png" class="w-3.5 h-3.5 inline-block object-contain -mt-0.5"> Mobile'
+        : (currentDevice === 'tablet'
+          ? '<img src="icons/tablet.png" class="w-3.5 h-3.5 inline-block object-contain -mt-0.5"> Tablet'
+          : '<img src="icons/desktop.png" class="w-3.5 h-3.5 inline-block object-contain -mt-0.5"> Desktop');
+      currentTaskLabel.innerHTML = `Sedang memindai: "${escapeHtml(currentKeyword)}" (${devImg})`;
     } else {
       currentTaskLabel.textContent = status === 'completed' ? 'Semua pemindaian selesai!' : '-';
     }
@@ -452,13 +456,13 @@
 
       // Device badge
       let devBadgeClass = 'badge-desktop';
-      let devIcon = '🖥️';
+      let devIcon = '<img src="icons/desktop.png" alt="Desktop" class="w-3.5 h-3.5 object-contain inline-block">';
       if (item.device === 'mobile') {
         devBadgeClass = 'badge-mobile';
-        devIcon = '📱';
+        devIcon = '<img src="icons/mobile.png" alt="Mobile" class="w-3.5 h-3.5 object-contain inline-block">';
       } else if (item.device === 'tablet') {
         devBadgeClass = 'badge-tablet';
-        devIcon = '📟';
+        devIcon = '<img src="icons/tablet.png" alt="Tablet" class="w-3.5 h-3.5 object-contain inline-block">';
       }
 
       // Sitelinks chips
