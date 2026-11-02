@@ -268,7 +268,7 @@ function normalizeDomain(d) {
 }
 
 export async function clickDetectedAds(page, adItems = [], options = {}) {
-  const ownDomains = (Array.isArray(options.ownDomains) && options.ownDomains.length ? options.ownDomains : ['mesinprinting.id'])
+  const ownDomains = (Array.isArray(options.ownDomains) ? options.ownDomains : [])
     .map(normalizeDomain)
     .filter(Boolean);
   const targetAds = (Array.isArray(options.targetAds) ? options.targetAds : [])

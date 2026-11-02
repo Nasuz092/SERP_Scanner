@@ -61,10 +61,6 @@
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
         <span id="sessionStatusText">Siap (Idle)</span>
       </div>
-      <span class="text-slate-300">|</span>
-      <a href="https://mesinprinting.id" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
-        mesinprinting.id
-      </a>
     </div>
   </header>
 
@@ -92,14 +88,15 @@
 
         <textarea id="keywordsInput" rows="7"
           class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono leading-relaxed resize-y"
-          placeholder="mesin digital printing&#10;harga mesin cetak banner&#10;harga mesin cetak baliho&#10;harga mesin cetak spanduk&#10;harga mesin outdoor&#10;jual mesin digital printing"></textarea>
+          placeholder="jasa pembuatan website&#10;kursus digital marketing&#10;konsultan seo indonesia&#10;jual laptop murah&#10;software akuntansi bisnis"></textarea>
 
         <!-- Presets & File Upload -->
         <div class="mt-3 flex items-center justify-between gap-2 flex-wrap">
           <div class="flex items-center gap-1.5">
-            <button id="btnPresetMesin" type="button"
-              class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-medium cursor-pointer">
-              Contoh Mesin Printing
+            <button id="btnLoadDefaultKeywords" type="button"
+              class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-medium cursor-pointer"
+              title="Muat kata kunci default dari file keywords.txt">
+              Muat keywords.txt
             </button>
             <button id="btnClearInput" type="button"
               class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition font-medium cursor-pointer">
@@ -222,10 +219,10 @@
                 <span>Domain Sendiri yang TIDAK Boleh Diklik (Blacklist):</span>
               </label>
               <input type="text" id="ownDomainsInput"
-                value="mesinprinting.id, anugrahsupplymandiri.com, anugrahsupplymandiri.co.id"
-                placeholder="mesinprinting.id, domain-anda.com"
+                value=""
+                placeholder="domain-anda.com, website-saya.id (otomatis dibaca dari blacklist.txt)"
                 class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <span class="text-[10px] text-slate-500 block mt-0.5 leading-tight">Iklan milik domain di atas otomatis dilindungi &amp; TIDAK akan diklik demi menghemat budget.</span>
+              <span class="text-[10px] text-slate-500 block mt-0.5 leading-tight">Iklan milik domain di atas otomatis dilindungi &amp; TIDAK akan diklik demi menghemat budget. Diambil dari file <code class="text-blue-700 font-mono">blacklist.txt</code>.</span>
             </div>
 
             <!-- Target Domain/Link Iklan yang WAJIB Diklik (Whitelist) -->
@@ -567,7 +564,7 @@
               <span>Bukti Screenshot Hasil Scan Google</span>
               <span id="modalDeviceBadge" class="text-[11px] px-2 py-0.5 rounded-full font-mono font-medium bg-blue-50 text-blue-700 border border-blue-200">Desktop</span>
             </h3>
-            <p id="modalKeywordLabel" class="text-xs text-slate-500 font-mono mt-0.5">Kata kunci: "mesin digital printing"</p>
+            <p id="modalKeywordLabel" class="text-xs text-slate-500 font-mono mt-0.5">Kata kunci: -</p>
           </div>
         </div>
         <button id="btnCloseModal" type="button" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">

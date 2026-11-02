@@ -1,0 +1,11 @@
+# KONFIGURASI TAMBAHAN SCANNER
+# Baris yang diawali tanda pagar (#) akan diabaikan.
+
+# Jeda waktu antar pemindaian kata kunci (dalam detik, direkomendasikan 3-5 detik)
+DELAY_SECONDS=3
+
+# Mode Browser (true = berjalan di latar belakang / headless, false = tampilkan jendela browser)
+HEADLESS=true
+
+# Domain Target kompetitor yang WAJIB diklik (whitelist, pisahkan koma jika lebih dari satu)
+TARGET_ADS=

@@ -40,7 +40,7 @@ C:\Users\dell\Documents\google-serp-scanner
    - 🗺️ **Google Maps (Local 3-Pack)**: Nama Toko/Profil Bisnis, Rating Bintang, Jumlah Ulasan, Alamat/Kategori, Nomor Telepon.
    - 🟣 **AI Overview / Featured Snippet**: Jawaban langsung posisi 0 (*Position Zero*) beserta domain sitasi.
    - ❓ **People Also Ask (PAA)**: Pertanyaan-pertanyaan populer Google.
-5. **Pencarian Cepat Domain Sendiri**: Ketik nama domain Anda di kolom pencarian (misal: `mesinprinting.id`) untuk langsung melihat di keyword mana saja website Anda muncul di halaman 1.
+5. **Pencarian Cepat Domain Sendiri**: Ketik nama domain Anda di kolom pencarian (misal: `domain-anda.com`) untuk langsung melihat di keyword mana saja website Anda muncul di halaman 1.
 6. **Ekspor Sekali Klik**:
    - **📊 Excel / CSV**: Format UTF-8 BOM yang otomatis rapi dan langsung terbaca di Microsoft Excel.
    - **📄 JSON**: Format data mentah terstruktur.

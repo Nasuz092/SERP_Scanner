@@ -1,0 +1,10 @@
+# DAFTAR KATA KUNCI DEFAULT (KEYWORDS)
+# Masukkan 1 kata kunci per baris di bawah ini.
+# Baris yang diawali tanda pagar (#) akan diabaikan.
+# File ini otomatis dibaca oleh Google SERP Scanner saat aplikasi dibuka.
+
+jasa pembuatan website
+kursus digital marketing
+konsultan seo indonesia
+jual laptop murah
+software akuntansi bisnis

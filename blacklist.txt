@@ -1,0 +1,7 @@
+# DAFTAR DOMAIN SENDIRI (BLACKLIST)
+# Masukkan nama domain milik Anda sendiri yang TIDAK boleh diklik saat fitur klik iklan aktif.
+# Masukkan 1 domain per baris (atau pisahkan dengan koma).
+# Baris yang diawali tanda pagar (#) akan diabaikan.
+# Contoh:
+# domain-anda.com
+# website-saya.id

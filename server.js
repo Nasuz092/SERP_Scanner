@@ -15,11 +15,68 @@ if (!fs.existsSync(SCREENSHOTS_DIR)) {
   fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
 }
 
-const DEFAULT_OWN_DOMAINS = [
-  'mesinprinting.id',
-  'anugrahsupplymandiri.com',
-  'anugrahsupplymandiri.co.id'
-];
+// External Text File Configurations (keywords.txt, blacklist.txt, config.txt)
+const KEYWORDS_FILE = path.join(__dirname, 'keywords.txt');
+const BLACKLIST_FILE = path.join(__dirname, 'blacklist.txt');
+const CONFIG_FILE = path.join(__dirname, 'config.txt');
+
+function loadKeywordsFile() {
+  if (!fs.existsSync(KEYWORDS_FILE)) return [];
+  try {
+    const raw = fs.readFileSync(KEYWORDS_FILE, 'utf8');
+    return raw
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && !line.startsWith('#'));
+  } catch (e) {
+    return [];
+  }
+}
+
+function loadBlacklistFile() {
+  if (!fs.existsSync(BLACKLIST_FILE)) return [];
+  try {
+    const raw = fs.readFileSync(BLACKLIST_FILE, 'utf8');
+    return raw
+      .split(/[\r\n,]+/)
+      .map(line => line.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0])
+      .filter(line => line.length > 0 && !line.startsWith('#'));
+  } catch (e) {
+    return [];
+  }
+}
+
+function loadConfigFile() {
+  const cfg = {
+    delaySeconds: 3,
+    headless: true,
+    targetAds: []
+  };
+  if (!fs.existsSync(CONFIG_FILE)) return cfg;
+  try {
+    const raw = fs.readFileSync(CONFIG_FILE, 'utf8');
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf('=');
+      if (idx === -1) continue;
+      const key = trimmed.slice(0, idx).trim().toUpperCase();
+      const val = trimmed.slice(idx + 1).trim();
+      if (key === 'DELAY_SECONDS') {
+        const num = parseInt(val, 10);
+        if (!isNaN(num) && num > 0) cfg.delaySeconds = num;
+      } else if (key === 'HEADLESS') {
+        cfg.headless = val.toLowerCase() !== 'false';
+      } else if (key === 'TARGET_ADS') {
+        cfg.targetAds = val.split(',').map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0]).filter(Boolean);
+      }
+    }
+  } catch (e) {}
+  return cfg;
+}
+
+const defaultOwnDomains = loadBlacklistFile();
+const defaultAppConfig = loadConfigFile();
 
 // Global Scanning Session State
 let scanSession = {
@@ -27,14 +84,14 @@ let scanSession = {
   shouldStop: false,
   keywords: [],
   devices: ['desktop'],
-  delaySeconds: 3,
-  headless: true,
+  delaySeconds: defaultAppConfig.delaySeconds || 3,
+  headless: defaultAppConfig.headless !== false,
   proxy: null,
 
   // Click-Ads options
   clickAds: false,
-  ownDomains: [...DEFAULT_OWN_DOMAINS],
-  targetAds: [],
+  ownDomains: [...defaultOwnDomains],
+  targetAds: [...defaultAppConfig.targetAds],
   targetOnly: false,
   clickBottomAds: false,
   maxClicksPerKeyword: 3,
@@ -631,6 +688,42 @@ const server = http.createServer(async (req, res) => {
     broadcastSSE('status', getSessionStatus());
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Hasil dan log berhasil dibersihkan.' }));
+    return;
+  }
+
+  // API: Get App Defaults from text files (keywords.txt, blacklist.txt, config.txt)
+  if (pathname === '/api/config' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      keywords: loadKeywordsFile(),
+      ownDomains: loadBlacklistFile(),
+      config: loadConfigFile()
+    }));
+    return;
+  }
+
+  // API: Save Defaults to text files
+  if (pathname === '/api/config/save' && req.method === 'POST') {
+    let bodyStr = '';
+    req.on('data', chunk => { bodyStr += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(bodyStr || '{}');
+        if (Array.isArray(payload.keywords)) {
+          const content = '# DAFTAR KATA KUNCI DEFAULT (KEYWORDS)\n# 1 kata kunci per baris\n\n' + payload.keywords.join('\n') + '\n';
+          fs.writeFileSync(KEYWORDS_FILE, content, 'utf8');
+        }
+        if (Array.isArray(payload.ownDomains)) {
+          const content = '# DAFTAR DOMAIN SENDIRI (BLACKLIST)\n# 1 domain per baris\n\n' + payload.ownDomains.join('\n') + '\n';
+          fs.writeFileSync(BLACKLIST_FILE, content, 'utf8');
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, message: 'Pengaturan default berhasil disimpan ke file text.' }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
     return;
   }
 

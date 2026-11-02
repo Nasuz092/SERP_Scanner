@@ -10,7 +10,7 @@
   // DOM Elements
   const keywordsInput = document.getElementById('keywordsInput');
   const keywordCountBadge = document.getElementById('keywordCountBadge');
-  const btnPresetMesin = document.getElementById('btnPresetMesin');
+  const btnLoadDefaultKeywords = document.getElementById('btnLoadDefaultKeywords');
   const btnClearInput = document.getElementById('btnClearInput');
   const fileImport = document.getElementById('fileImport');
 
@@ -135,23 +135,24 @@
 
   keywordsInput.addEventListener('input', updateKeywordCount);
 
-  // Preset Keywords: Mesin Printing Industry
-  btnPresetMesin.addEventListener('click', () => {
-    const samples = [
-      'mesin digital printing outdoor',
-      'mesin digital printing indoor',
-      'jual printer dtf a3',
-      'mesin printing uv flatbed',
-      'harga mesin digital printing',
-      'distributor mesin digital printing jakarta',
-      'mesin digital printing konica minolta',
-      'anugrah supply mandiri',
-      'mesin percetakan banner spanduk',
-      'mesin digital printing tekstil sublim'
-    ];
-    keywordsInput.value = samples.join('\n');
-    updateKeywordCount();
-  });
+  // Muat Kata Kunci Default dari keywords.txt
+  if (btnLoadDefaultKeywords) {
+    btnLoadDefaultKeywords.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.keywords) && data.keywords.length > 0) {
+            keywordsInput.value = data.keywords.join('\n');
+            updateKeywordCount();
+            appendLog(`Berhasil memuat ${data.keywords.length} kata kunci dari keywords.txt`, 'success');
+            return;
+          }
+        }
+      } catch (e) {}
+      appendLog('File keywords.txt kosong atau belum diisi. Anda dapat mengedit file keywords.txt di folder aplikasi.', 'warning');
+    });
+  }
 
   // Clear Input
   btnClearInput.addEventListener('click', () => {
@@ -356,7 +357,7 @@
           <div class="flex items-center gap-1.5 font-bold text-xs text-blue-800">
             <span>DILEWATI (DOMAIN SENDIRI)</span>
           </div>
-          <span class="text-[11px] text-blue-600 block mt-0.5">Domain ini milik ${escapeHtml(item.domain || 'mesinprinting.id')}</span>
+          <span class="text-[11px] text-blue-600 block mt-0.5">Domain ini masuk daftar proteksi domain sendiri: ${escapeHtml(item.domain || '')}</span>
         </div>
       `;
     }
@@ -909,7 +910,43 @@
   if (btnExportCsv) btnExportCsv.addEventListener('click', () => closeExportMenu());
   if (btnExportJson) btnExportJson.addEventListener('click', () => closeExportMenu());
 
+  // Load defaults from text files via /api/config
+  async function loadInitialConfig() {
+    try {
+      const res = await fetch('/api/config');
+      if (!res.ok) return;
+      const data = await res.json();
+
+      // Auto-populate keywords if textarea is empty and keywords.txt has data
+      if (Array.isArray(data.keywords) && data.keywords.length > 0 && !keywordsInput.value.trim()) {
+        keywordsInput.value = data.keywords.join('\n');
+        updateKeywordCount();
+      }
+
+      // Auto-populate blacklist ownDomains from blacklist.txt
+      if (Array.isArray(data.ownDomains) && data.ownDomains.length > 0 && ownDomainsInput && !ownDomainsInput.value.trim()) {
+        ownDomainsInput.value = data.ownDomains.join(', ');
+      }
+
+      // Auto-populate additional config
+      if (data.config) {
+        if (data.config.delaySeconds && delayInput) {
+          delayInput.value = data.config.delaySeconds;
+        }
+        if (data.config.headless !== undefined && headlessCheckbox) {
+          headlessCheckbox.checked = data.config.headless;
+        }
+        if (Array.isArray(data.config.targetAds) && data.config.targetAds.length > 0 && targetAdsInput && !targetAdsInput.value.trim()) {
+          targetAdsInput.value = data.config.targetAds.join(', ');
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal memuat konfigurasi default dari file text:', e);
+    }
+  }
+
   // Init
+  loadInitialConfig();
   updateKeywordCount();
   toggleClickAdsOptions();
   loadInitialStatus();
