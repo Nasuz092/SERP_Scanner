@@ -123,7 +123,7 @@
     }
     clickInfoBadge.classList.remove('hidden');
     clickInfoBadge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-mono';
-    clickInfoBadge.textContent = `:= ± ${clickInfo.totalClicked || 0} klik / ${clickInfo.totalSkipped || 0} dilewati`;
+    clickInfoBadge.textContent = `${clickInfo.totalClicked || 0} klik / ${clickInfo.totalSkipped || 0} dilewati`;
   }
 
   // Helper: Count keywords in textarea
@@ -200,19 +200,19 @@
     let prefix = '•';
     if (type === 'success') {
       colorClass = 'text-emerald-400 font-semibold';
-      prefix = '✔';
+      prefix = '[OK]';
     } else if (type === 'scan') {
       colorClass = 'text-blue-400';
-      prefix = '🔍';
+      prefix = '[SCAN]';
     } else if (type === 'warning') {
       colorClass = 'text-amber-400';
-      prefix = '⚠';
+      prefix = '[WARN]';
     } else if (type === 'error') {
       colorClass = 'text-rose-400 font-bold';
-      prefix = '✖';
+      prefix = '[ERR]';
     } else if (type === 'debug') {
       colorClass = 'text-slate-500';
-      prefix = '⏱';
+      prefix = '[WAIT]';
     }
 
     logItem.className = `flex items-start gap-1.5 ${colorClass}`;
@@ -276,7 +276,7 @@
       btnStopScan.disabled = true;
       sessionStatusText.textContent = 'Selesai';
       sessionStatusPill.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700';
-      currentStatusIndicator.textContent = '✓ Selesai';
+      currentStatusIndicator.textContent = 'Selesai';
       currentStatusIndicator.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
       stopTimer();
     } else if (status === 'stopped') {
@@ -344,7 +344,7 @@
       return `
         <div class="mt-2 p-2.5 rounded-xl ${isTarget ? 'bg-amber-50/90 border border-amber-300 text-amber-950' : 'bg-emerald-50/90 border border-emerald-200 text-emerald-950'}">
           <div class="flex items-center gap-1.5 font-bold text-xs ${isTarget ? 'text-amber-900' : 'text-emerald-800'}">
-            <span>${isTarget ? '🎯 IKLAN TARGET UTAMA BERHASIL DIKLIK' : '🖱️ IKLAN KOMPETITOR BERHASIL DIKLIK'}</span>
+            <span>${isTarget ? 'IKLAN TARGET UTAMA BERHASIL DIKLIK' : 'IKLAN KOMPETITOR BERHASIL DIKLIK'}</span>
           </div>
           <span class="text-[11px] ${isTarget ? 'text-amber-700' : 'text-emerald-600'} block mt-0.5">${escapeHtml(item.clickDetails || '')}</span>
         </div>
@@ -354,7 +354,7 @@
       return `
         <div class="mt-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/90 text-blue-900">
           <div class="flex items-center gap-1.5 font-bold text-xs text-blue-800">
-            <span>🛡️ DILEWATI (DOMAIN SENDIRI)</span>
+            <span>DILEWATI (DOMAIN SENDIRI)</span>
           </div>
           <span class="text-[11px] text-blue-600 block mt-0.5">Domain ini milik ${escapeHtml(item.domain || 'mesinprinting.id')}</span>
         </div>
@@ -363,7 +363,7 @@
     if (item.clickStatus === 'SKIPPED_BOTTOM_DISABLED') {
       return `
         <div class="mt-2 p-2 rounded-xl bg-amber-50/70 border border-amber-200 text-amber-900 text-[11px]">
-          <span class="font-semibold text-amber-800">ℹ️ Sponsor Bawah (Belum Diklik)</span>
+          <span class="font-semibold text-amber-800">Sponsor Bawah (Belum Diklik)</span>
           <span class="text-[10px] text-amber-700 block mt-0.5">Iklan dilewati karena opsi 'Klik iklan bawah' belum dicentang.</span>
         </div>
       `;
@@ -371,20 +371,20 @@
     if (item.clickStatus === 'SKIPPED_NOT_TARGET') {
       return `
         <div class="mt-2 p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-[11px]">
-          <span>ℹ️ Dilewati (Bukan target yang di-whitelist)</span>
+          <span>Dilewati (Bukan target yang di-whitelist)</span>
         </div>
       `;
     }
     if (item.clickStatus === 'SKIPPED_LIMIT') {
       return `
         <div class="mt-2 p-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 text-[10px]">
-          <span>⚠️ Dilewati (Melebihi batas maksimal klik per keyword)</span>
+          <span>Dilewati (Melebihi batas maksimal klik per keyword)</span>
         </div>
       `;
     }
     return `
       <div class="mt-2 pt-1 border-t border-slate-100">
-        <span class="text-[10px] text-slate-400 font-mono">⚪ Mode klik iklan dinonaktifkan</span>
+        <span class="text-[10px] text-slate-400 font-mono">Mode klik iklan dinonaktifkan</span>
       </div>
     `;
   }
@@ -422,8 +422,8 @@
       resultsTableBody.innerHTML = `
         <tr>
           <td colspan="6" class="py-12 text-center text-slate-400">
-            <span class="text-3xl block mb-2">🔎</span>
-            <p class="font-medium text-slate-300">Tidak ada hasil yang cocok dengan filter "${escapeHtml(searchTerm || currentFilter)}"</p>
+            <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <p class="font-medium text-slate-500">Tidak ada hasil yang cocok dengan filter "${escapeHtml(searchTerm || currentFilter)}"</p>
           </td>
         </tr>
       `;
@@ -470,7 +470,7 @@
       if (Array.isArray(item.sitelinks) && item.sitelinks.length > 0) {
         sitelinksHtml = `
           <div class="flex items-center gap-1.5 flex-wrap mt-2">
-            ${item.sitelinks.map(sl => `<span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700/80 text-[10px] text-slate-300 font-mono">🔗 ${escapeHtml(sl)}</span>`).join('')}
+            ${item.sitelinks.map(sl => `<span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700/80 text-[10px] text-slate-300 font-mono">${escapeHtml(sl)}</span>`).join('')}
           </div>
         `;
       }
@@ -479,7 +479,7 @@
       const isDomainMatch = searchTerm && item.domain && item.domain.toLowerCase().includes(searchTerm.toLowerCase());
       const domainDisplay = item.domain ? `
         <span class="inline-flex items-center gap-1 font-mono text-[11px] ${isDomainMatch ? 'text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-bold' : 'text-slate-500'}">
-          🌐 ${escapeHtml(item.domain)}
+          ${escapeHtml(item.domain)}
         </span>
       ` : '';
 
@@ -517,7 +517,7 @@
             <span class="font-semibold text-slate-800 block text-xs">${escapeHtml(item.keyword || '')}</span>
             ${item.screenshot ? `
               <button type="button" data-ss="${escapeHtml(item.screenshot)}" data-kw="${escapeHtml(item.keyword || '')}" data-dev="${escapeHtml(item.device || '')}" class="btn-view-ss inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition shadow-xs cursor-pointer">
-                <span>🖼️ Bukti SS</span>
+                <span>Bukti SS</span>
               </button>
             ` : ''}
           </td>
@@ -531,7 +531,7 @@
               ${item.category === 'AI_OVERVIEW' ? `
                 <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 mt-1.5 space-y-1.5">
                   <div class="text-[11px] font-bold text-purple-800 flex items-center gap-1.5">
-                    <span>🤖 Ringkasan Jawaban AI Google:</span>
+                    <span>Ringkasan Jawaban AI Google:</span>
                   </div>
                   <p class="text-[11px] text-purple-950 whitespace-pre-line leading-relaxed font-sans">
                     ${escapeHtml(item.snippet || '')}
@@ -613,7 +613,7 @@
 
     if (clickAds) {
       const confirmed = confirm(
-        '⚠️ PERINGATAN KLIK IKLAN\n\n' +
+        'PERINGATAN KLIK IKLAN\n\n' +
         'Fitur ini akan MENGKLIK iklan Google Ads yang terdeteksi di halaman hasil pencarian.\n\n' +
         'Iklan dari domain berikut akan DILEWATI otomatis:\n' +
         (ownDomains.length ? ownDomains.map(d => '  • ' + d).join('\n') : '  (tidak ada — semua iklan akan diklik!)') + '\n\n' +
@@ -653,9 +653,9 @@
         alert(res.error || 'Gagal memulai scan');
         stopTimer();
       } else {
-        appendLog(`🚀 Memulai scan ${keywords.length} kata kunci di ${devices.join(', ')}...`, 'success');
+        appendLog(`Memulai scan ${keywords.length} kata kunci di ${devices.join(', ')}...`, 'success');
         if (clickAds) {
-          appendLog(`🖱️ Mode Klik Iklan AKTIF — own-domain dilewati: ${ownDomains.join(', ') || '(tidak ada)'}`, 'warning');
+          appendLog(`Mode Klik Iklan AKTIF — own-domain dilewati: ${ownDomains.join(', ') || '(tidak ada)'}`, 'warning');
         }
       }
     } catch (err) {
@@ -723,8 +723,8 @@
 
     eventSource.addEventListener('progress', (e) => {
       const prog = JSON.parse(e.data);
-      const devIcon = prog.currentDevice === 'mobile' ? '📱 Mobile' : (prog.currentDevice === 'tablet' ? '📟 Tablet' : '🖥️ Desktop');
-      currentTaskLabel.textContent = `[${prog.currentIndex}/${prog.totalTasks}] "${prog.currentKeyword}" (${devIcon})`;
+      const devName = prog.currentDevice === 'mobile' ? 'Mobile' : (prog.currentDevice === 'tablet' ? 'Tablet' : 'Desktop');
+      currentTaskLabel.textContent = `[${prog.currentIndex}/${prog.totalTasks}] "${prog.currentKeyword}" (${devName})`;
     });
 
     eventSource.addEventListener('log', (e) => {
