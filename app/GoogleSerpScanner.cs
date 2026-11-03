@@ -13,12 +13,6 @@ namespace GoogleSerpScannerApp
     public class MainForm : Form
     {
         [DllImport("user32.dll")]
-        private static extern bool SetProcessDpiAwarenessContext(int dpiContext);
-
-        [DllImport("shcore.dll")]
-        private static extern int SetProcessDpiAwareness(int awareness);
-
-        [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
         private Process nodeProcess;
@@ -39,24 +33,30 @@ namespace GoogleSerpScannerApp
         [STAThread]
         public static void Main()
         {
-            // Enable True Per-Monitor V2 High-DPI Awareness for razor-sharp HD rendering
             try
             {
-                SetProcessDpiAwarenessContext(-4);
+                SetProcessDPIAware();
             }
-            catch
-            {
-                try { SetProcessDpiAwareness(2); }
-                catch { try { SetProcessDPIAware(); } catch { } }
-            }
+            catch { }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+            Application.ThreadException += (s, e) =>
+            {
+                MessageBox.Show(
+                    "Terjadi kesalahan UI:\n\n" + e.Exception.Message,
+                    "Google SERP Scanner Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            };
+
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
                 MessageBox.Show(
-                    "Terjadi kesalahan saat memulai aplikasi:\n\n" + e.ExceptionObject.ToString(),
+                    "Terjadi kesalahan sistem:\n\n" + e.ExceptionObject.ToString(),
                     "Google SERP Scanner Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -83,7 +83,8 @@ namespace GoogleSerpScannerApp
             this.BackColor = Color.FromArgb(248, 250, 252);
             this.ForeColor = Color.FromArgb(15, 23, 42);
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.None;
             this.DoubleBuffered = true;
 
             // Set Application Window Icon (Google Search Magnifier)
@@ -256,6 +257,16 @@ namespace GoogleSerpScannerApp
             this.Controls.Add(btnOpenFolder);
             this.Controls.Add(btnRestartServer);
             this.Controls.Add(terminalCard);
+
+            this.Shown += (s, e) =>
+            {
+                try
+                {
+                    this.BringToFront();
+                    this.Activate();
+                }
+                catch { }
+            };
 
             this.FormClosing += MainForm_FormClosing;
         }
@@ -752,18 +763,22 @@ namespace GoogleSerpScannerApp
             }
 
             // Draw user-provided terminal icon (terminal_white.png) inside badge
-            if (AppIcons.TerminalWhite != null)
+            try
             {
-                g.DrawImage(AppIcons.TerminalWhite, new Rectangle(badgeX + 4, badgeY + 4, 17, 17));
-            }
-            else
-            {
-                using (Font f = new Font("Consolas", 9f, FontStyle.Bold))
-                using (SolidBrush tb = new SolidBrush(Color.White))
+                if (AppIcons.TerminalWhite != null)
                 {
-                    g.DrawString(">_", f, tb, badgeX + 3, badgeY + 4);
+                    g.DrawImage(AppIcons.TerminalWhite, new Rectangle(badgeX + 4, badgeY + 4, 17, 17));
+                }
+                else
+                {
+                    using (Font f = new Font("Consolas", 9f, FontStyle.Bold))
+                    using (SolidBrush tb = new SolidBrush(Color.White))
+                    {
+                        g.DrawString(">_", f, tb, badgeX + 3, badgeY + 4);
+                    }
                 }
             }
+            catch { }
 
             // Draw Running / Stopped pill badge directly on top right
             int pillW = 90;
@@ -986,10 +1001,14 @@ namespace GoogleSerpScannerApp
                 int iconX = 22;
                 int iconY = centerY - iconSize / 2;
 
-                if (AppIcons.ComputerWhite != null)
+                try
                 {
-                    g.DrawImage(AppIcons.ComputerWhite, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    if (AppIcons.ComputerWhite != null)
+                    {
+                        g.DrawImage(AppIcons.ComputerWhite, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    }
                 }
+                catch { }
 
                 using (Font font = new Font("Segoe UI", 9.5f, FontStyle.Bold))
                 using (SolidBrush tb = new SolidBrush(textColor))
@@ -1016,10 +1035,14 @@ namespace GoogleSerpScannerApp
                 if (iconX < 18) iconX = 18;
                 int iconY = centerY - iconSize / 2;
 
-                if (AppIcons.FolderSlate != null)
+                try
                 {
-                    g.DrawImage(AppIcons.FolderSlate, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    if (AppIcons.FolderSlate != null)
+                    {
+                        g.DrawImage(AppIcons.FolderSlate, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    }
                 }
+                catch { }
 
                 using (Font font = new Font("Segoe UI", 9f, FontStyle.Bold))
                 using (SolidBrush tb = new SolidBrush(textColor))
@@ -1035,10 +1058,14 @@ namespace GoogleSerpScannerApp
                 if (iconX < 18) iconX = 18;
                 int iconY = centerY - iconSize / 2;
 
-                if (AppIcons.RestartSlate != null)
+                try
                 {
-                    g.DrawImage(AppIcons.RestartSlate, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    if (AppIcons.RestartSlate != null)
+                    {
+                        g.DrawImage(AppIcons.RestartSlate, new Rectangle(iconX, iconY, iconSize, iconSize));
+                    }
                 }
+                catch { }
 
                 using (Font font = new Font("Segoe UI", 9f, FontStyle.Bold))
                 using (SolidBrush tb = new SolidBrush(textColor))
@@ -1089,7 +1116,10 @@ namespace GoogleSerpScannerApp
                     byte[] bytes = File.ReadAllBytes(filePath);
                     using (MemoryStream ms = new MemoryStream(bytes))
                     {
-                        return new Bitmap(ms);
+                        using (Bitmap temp = new Bitmap(ms))
+                        {
+                            return new Bitmap(temp);
+                        }
                     }
                 }
             }
@@ -1100,7 +1130,10 @@ namespace GoogleSerpScannerApp
                 byte[] bytes = Convert.FromBase64String(b64);
                 using (MemoryStream ms = new MemoryStream(bytes))
                 {
-                    return new Bitmap(ms);
+                    using (Bitmap temp = new Bitmap(ms))
+                    {
+                        return new Bitmap(temp);
+                    }
                 }
             }
             catch { return null; }
