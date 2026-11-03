@@ -162,14 +162,16 @@
               Jeda Antar Keyword:
             </label>
             <div class="flex items-center gap-2">
-              <div class="inline-flex items-center bg-slate-100/90 border border-slate-200/90 rounded-xl p-0.5 shadow-2xs">
-                <button type="button" id="btnDelayMinus" class="w-6 h-6 rounded-lg bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 flex items-center justify-center font-bold text-xs transition active:scale-90 shadow-2xs cursor-pointer select-none" title="Kurangi jeda (detik)">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
+              <div class="inline-flex items-center h-8 bg-white border border-slate-200/90 rounded-lg overflow-hidden shadow-2xs hover:border-slate-300 transition">
+                <button type="button" id="btnDelayMinus" class="w-7 h-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 active:bg-slate-200 transition select-none cursor-pointer focus:outline-none" title="Kurangi jeda (detik)">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
                 </button>
-                <input type="number" id="delayInput" min="1" max="15" value="3" readonly
-                  class="w-8 bg-transparent text-center text-xs font-bold font-mono text-slate-800 focus:outline-none select-none">
-                <button type="button" id="btnDelayPlus" class="w-6 h-6 rounded-lg bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 flex items-center justify-center font-bold text-xs transition active:scale-90 shadow-2xs cursor-pointer select-none" title="Tambah jeda (detik)">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                <div class="w-9 h-full flex items-center justify-center border-x border-slate-200/80 bg-slate-50/50">
+                  <input type="number" id="delayInput" min="1" max="15" value="3" readonly
+                    class="w-full bg-transparent text-center text-xs font-bold font-mono text-slate-800 focus:outline-none select-none cursor-default">
+                </div>
+                <button type="button" id="btnDelayPlus" class="w-7 h-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 active:bg-slate-200 transition select-none cursor-pointer focus:outline-none" title="Tambah jeda (detik)">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                 </button>
               </div>
               <span class="text-xs text-slate-500 font-medium">detik</span>
@@ -274,17 +276,19 @@
               
               <div class="flex items-center gap-1.5 justify-end">
                 <span class="text-[11px] text-slate-600 font-medium">Maks klik:</span>
-                <div class="inline-flex items-center bg-amber-50 border border-amber-200 rounded-xl p-0.5 shadow-2xs">
-                  <button type="button" id="btnMaxClicksMinus" class="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-300/80 text-amber-800 flex items-center justify-center font-bold text-[10px] transition active:scale-90 shadow-2xs cursor-pointer select-none" title="Kurangi batas klik">
-                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
+                <div class="inline-flex items-center h-7 bg-white border border-amber-300/90 rounded-lg overflow-hidden shadow-2xs hover:border-amber-400 transition">
+                  <button type="button" id="btnMaxClicksMinus" class="w-6 h-full flex items-center justify-center text-amber-700 hover:text-amber-900 hover:bg-amber-100/70 active:bg-amber-200 transition select-none cursor-pointer focus:outline-none" title="Kurangi batas klik">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
                   </button>
-                  <input type="number" id="maxClicksInput" min="1" max="10" value="3" readonly
-                    class="w-7 bg-transparent text-center text-[11px] font-bold font-mono text-amber-900 focus:outline-none select-none">
-                  <button type="button" id="btnMaxClicksPlus" class="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-300/80 text-amber-800 flex items-center justify-center font-bold text-[10px] transition active:scale-90 shadow-2xs cursor-pointer select-none" title="Tambah batas klik">
-                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                  <div class="w-7 h-full flex items-center justify-center border-x border-amber-300/80 bg-amber-50/50">
+                    <input type="number" id="maxClicksInput" min="1" max="10" value="3" readonly
+                      class="w-full bg-transparent text-center text-[11px] font-bold font-mono text-amber-900 focus:outline-none select-none cursor-default">
+                  </div>
+                  <button type="button" id="btnMaxClicksPlus" class="w-6 h-full flex items-center justify-center text-amber-700 hover:text-amber-900 hover:bg-amber-100/70 active:bg-amber-200 transition select-none cursor-pointer focus:outline-none" title="Tambah batas klik">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                   </button>
                 </div>
-                <span class="text-[11px] text-slate-500">/ kw</span>
+                <span class="text-[11px] text-slate-500 font-medium">/ kw</span>
               </div>
             </div>
           </div>
