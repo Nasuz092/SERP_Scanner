@@ -569,42 +569,21 @@ namespace GoogleSerpScannerApp
                 }
             }
 
-            // Draw Blue Squircle Icon Badge with White Search Magnifier
-            int iconX = 18;
-            int iconY = 14;
-            int iconSize = 46;
-            using (GraphicsPath squircle = GetRoundedRect(new Rectangle(iconX, iconY, iconSize, iconSize), 12))
-            {
-                using (SolidBrush blueBrush = new SolidBrush(Color.FromArgb(29, 104, 242)))
-                {
-                    g.FillPath(blueBrush, squircle);
-                }
-            }
-
-            // Draw Magnifying Glass inside squircle
-            using (Pen pen = new Pen(Color.White, 2.5f))
-            {
-                pen.StartCap = LineCap.Round;
-                pen.EndCap = LineCap.Round;
-                pen.LineJoin = LineJoin.Round;
-                // Circle
-                g.DrawEllipse(pen, iconX + 13, iconY + 13, 14, 14);
-                // Handle
-                g.DrawLine(pen, iconX + 24, iconY + 24, iconX + 31, iconY + 31);
-            }
+            int startX = 18;
+            int startY = 15;
 
             // Draw Title Text
             using (Font titleFont = new Font("Segoe UI", 13.5f, FontStyle.Bold))
             using (SolidBrush textBrush = new SolidBrush(Color.FromArgb(15, 23, 42)))
             {
-                g.DrawString("Google SERP Multi-Device Scanner", titleFont, textBrush, iconX + 56, iconY + 2);
+                g.DrawString("Google SERP Multi-Device Scanner", titleFont, textBrush, startX, startY);
             }
 
             // Draw Subtitle Text
             using (Font subFont = new Font("Segoe UI", 8.5f, FontStyle.Regular))
             using (SolidBrush subBrush = new SolidBrush(Color.FromArgb(100, 116, 139)))
             {
-                g.DrawString("Scan Halaman 1 Google (Desktop, Mobile, Tablet) \u2022 Organik, Ads, Maps", subFont, subBrush, iconX + 57, iconY + 26);
+                g.DrawString("Scan Halaman 1 Google (Desktop, Mobile, Tablet) \u2022 Organik, Ads, Maps", subFont, subBrush, startX, startY + 25);
             }
         }
 
