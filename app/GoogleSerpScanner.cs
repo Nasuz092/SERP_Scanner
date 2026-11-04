@@ -51,7 +51,25 @@ namespace GoogleSerpScannerApp
                 return null;
             };
 
-            // Set native WebView2Loader.dll location
+            try
+            {
+                RunApplication();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Terjadi kesalahan saat memulai aplikasi:\n\n" + ex.ToString(),
+                    "Google SERP Scanner - Kesalahan Startup",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void RunApplication()
+        {
+            // Set native WebView2Loader.dll location after AssemblyResolve is registered
             if (Directory.Exists(libDir))
             {
                 try
@@ -61,12 +79,6 @@ namespace GoogleSerpScannerApp
                 catch { }
             }
 
-            RunApplication();
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void RunApplication()
-        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -319,6 +331,15 @@ namespace GoogleSerpScannerApp
                         loadingPanel.Visible = false;
                         webView.Visible = true;
                         webView.BringToFront();
+                    }
+                    else
+                    {
+                        // Retry after short delay if server was still binding
+                        ThreadPool.QueueUserWorkItem((state) =>
+                        {
+                            Thread.Sleep(800);
+                            NavigateToDashboard();
+                        });
                     }
                 };
 
