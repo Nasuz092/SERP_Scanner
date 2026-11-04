@@ -30,7 +30,8 @@ SERP_Scanner/
 |   |-- scanner.js               Engine otomasi crawling SERP berbasis Playwright
 |   |-- package.json             Konfigurasi dependensi Node.js
 |   |-- app.ico                  Asset icon aplikasi Windows
-|   |-- GoogleSerpScanner.cs     Source code launcher C# WinForms
+|   |-- GoogleSerpScanner.cs     Source code launcher C# WinForms dengan WebView2
+|   |-- lib/                     Pustaka Microsoft Edge WebView2 runtime (.NET & native)
 |   |-- node_modules/            Pustaka dependensi eksternal
 |   `-- public/                  Antarmuka pengguna (HTML5, Tailwind CSS, JavaScript)
 |       |-- index.html
@@ -103,12 +104,9 @@ Menu unduhan kustom dengan animasi transisi yang menyediakan 3 format ekspor:
    ```text
    GoogleSerpScanner.exe
    ```
-4. Panel kontrol Windows Application akan terbuka dan secara otomatis memulai server latar belakang pada port 4321.
-5. Peramban (browser) default Anda akan langsung membuka alamat:
-   ```text
-   http://127.0.0.1:4321
-   ```
-6. Masukkan daftar kata kunci pada formulir input, tentukan perangkat target, lalu klik **Mulai Scan Sekarang**.
+4. Jendela aplikasi Windows desktop akan terbuka seketika dengan dashboard yang tersemat langsung secara native (didukung oleh engine Microsoft WebView2), tanpa perlu membuka tab peramban eksternal.
+5. Server Node.js dimulai di latar belakang. Pengguna dapat langsung memasukkan kata kunci pada formulir input dan klik **Mulai Scan Sekarang**.
+6. Bilah navigasi atas menyediakan tombol aksi cepat: **Folder Data**, **Restart Server**, **Log Terminal** (untuk melihat aktivitas backend), serta opsi **Browser Luar** jika ingin membuka di browser eksternal.
 
 ### Metode 2: Mode Pengembang (Node.js CLI)
 
@@ -157,7 +155,7 @@ Pengaturan preferensi awal saat server dinyalakan:
 Jika Anda melakukan perubahan pada launcher C# (`app/GoogleSerpScanner.cs`), kompilasi ulang dapat dilakukan langsung menggunakan C# compiler bawaan Windows tanpa memerlukan instalasi Visual Studio:
 
 ```powershell
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /win32icon:app\app.ico /out:GoogleSerpScanner.exe app\GoogleSerpScanner.cs
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /win32manifest:app\app.manifest /win32icon:app\app.ico /out:GoogleSerpScanner.exe /reference:System.Windows.Forms.dll,System.Drawing.dll,app\lib\Microsoft.Web.WebView2.WinForms.dll,app\lib\Microsoft.Web.WebView2.Core.dll app\GoogleSerpScanner.cs
 ```
 
 ---

@@ -5,3 +5,5 @@ app/public/screenshots/*
 !**/public/screenshots/.gitkeep
 .env
 *.log
+app/data/
+scratch/
