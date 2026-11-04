@@ -115,6 +115,7 @@ namespace GoogleSerpScannerApp
         private Label lblLoadingText;
         private ProgressBar progressBar;
         private TopBarPanel topBar;
+        private Label lblAppTitle;
         private StatusPillLabel lblStatusPill;
         private TerminalForm terminalForm;
 
@@ -136,7 +137,7 @@ namespace GoogleSerpScannerApp
 
         private void InitializeComponent()
         {
-            this.Text = "Google SERP Scanner - Windows Application";
+            this.Text = "Google SERP Scanner";
             this.ClientSize = new Size(1320, 860);
             this.MinimumSize = new Size(1024, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -179,25 +180,23 @@ namespace GoogleSerpScannerApp
             };
 
             // App Title in Top Bar
-            Label lblAppTitle = new Label
+            lblAppTitle = new Label
             {
                 Text = "Google SERP Scanner",
                 Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point),
                 ForeColor = Color.FromArgb(15, 23, 42),
-                AutoSize = true,
+                AutoSize = false,
                 Location = new Point(18, 14),
                 BackColor = Color.Transparent
             };
+            Size titleMeasured = TextRenderer.MeasureText("Google SERP Scanner", lblAppTitle.Font);
+            lblAppTitle.Size = new Size(titleMeasured.Width + 4, 24);
             topBar.Controls.Add(lblAppTitle);
 
             // Server Status Pill
-            lblStatusPill = new StatusPillLabel
-            {
-                Text = "Menyiapkan Server...",
-                IsOnline = false,
-                Location = new Point(190, 12),
-                Size = new Size(160, 28)
-            };
+            lblStatusPill = new StatusPillLabel();
+            lblStatusPill.UpdateStatus(false, "Menyiapkan Server...");
+            lblStatusPill.Location = new Point(lblAppTitle.Right + 12, 13);
             topBar.Controls.Add(lblStatusPill);
 
             // Top Bar Action Buttons (Right-Aligned)
@@ -591,9 +590,8 @@ namespace GoogleSerpScannerApp
                 this.BeginInvoke(new Action(() => SetStatus(isOnline, text)));
                 return;
             }
-            lblStatusPill.Text = text;
-            lblStatusPill.IsOnline = isOnline;
-            lblStatusPill.Invalidate();
+            lblStatusPill.UpdateStatus(isOnline, text);
+            lblStatusPill.Location = new Point(lblAppTitle.Right + 12, 13);
         }
 
         private void AppendLog(string message)
@@ -655,6 +653,17 @@ namespace GoogleSerpScannerApp
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
             this.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold, GraphicsUnit.Point);
+            this.Height = 26;
+            this.Width = 170;
+        }
+
+        public void UpdateStatus(bool isOnline, string text)
+        {
+            this.IsOnline = isOnline;
+            this.Text = text;
+            Size textSize = TextRenderer.MeasureText(text, this.Font);
+            this.Size = new Size(textSize.Width + 34, 26);
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -693,11 +702,10 @@ namespace GoogleSerpScannerApp
                 g.FillEllipse(dotBrush, dotX, dotY, dotSize, dotSize);
             }
 
-            // Text
-            using (SolidBrush textBrush = new SolidBrush(textColor))
-            {
-                g.DrawString(this.Text, this.Font, textBrush, dotX + dotSize + 6, (h - 14) / 2);
-            }
+            // Text with TextRenderer for crisp ClearType and vertical centering
+            int textX = dotX + dotSize + 6;
+            Rectangle textRect = new Rectangle(textX, 0, w - textX, h);
+            TextRenderer.DrawText(g, this.Text, this.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.SingleLine);
         }
 
         private GraphicsPath GetRoundedRect(Rectangle rect, int radius)
