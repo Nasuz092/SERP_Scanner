@@ -7,6 +7,8 @@ DELAY_SECONDS=3
 # Mode Browser (true = berjalan di latar belakang / headless, false = tampilkan jendela browser)
 HEADLESS=true
 
+# Lewati semua Iklan Google Maps (true = jangan pernah klik iklan Maps, false = perbolehkan klik jika bukan milik sendiri)
+SKIP_MAP_ADS=false
+
 # Domain Target kompetitor yang WAJIB diklik (whitelist, pisahkan koma jika lebih dari satu)
 TARGET_ADS=
-

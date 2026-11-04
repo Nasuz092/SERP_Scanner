@@ -5,7 +5,7 @@ export const DEVICE_PROFILES = {
   desktop: {
     id: 'desktop',
     name: 'Desktop (1920x1080)',
-    icon: '🖥️',
+    icon: '[Desktop]',
     viewport: { width: 1440, height: 900 },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     isMobile: false,
@@ -14,13 +14,13 @@ export const DEVICE_PROFILES = {
   mobile: {
     id: 'mobile',
     name: 'Mobile Smartphone (Pixel 7)',
-    icon: '📱',
+    icon: '[Mobile]',
     ...devices['Pixel 7']
   },
   tablet: {
     id: 'tablet',
     name: 'Tablet (iPad Air / 820x1180)',
-    icon: '📟',
+    icon: '[Tablet]',
     viewport: { width: 820, height: 1180 },
     userAgent: 'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     isMobile: true,
@@ -94,7 +94,11 @@ export async function extractSerpData(page, keyword, deviceType) {
     }
 
     // ==========================================
-    // 1. DETEKSI IKLAN (Hanya berdasarkan Link Valid)
+    // 1. DETEKSI SEMUA MODEL IKLAN GOOGLE ADS
+    //    - Search Text Ads (Top & Bottom)
+    //    - Google Maps Ads / Local Pack Sponsored
+    //    - Google Shopping Ads / PLA
+    //    - Local Services Ads & Extension Ads
     // ==========================================
     const adLinks = Array.from(document.querySelectorAll('a[href*="/aclk?"], a[href*="googleadservices"], a[href*="doubleclick.net"]'));
     const processedAds = new Set();
@@ -102,45 +106,152 @@ export async function extractSerpData(page, keyword, deviceType) {
 
     adLinks.forEach(link => {
       // Cari container pembungkus iklan
-      const container = link.closest('div.MjjYud, div.g, div[data-hveid], div.uEierd, div[data-text-ad]');
+      const container = link.closest(
+        'div.uEierd, div[data-text-ad], div.VkpGBb, div.rllt__details, div[data-cid], div[data-local-pack], div.pla-unit, div.commercial-unit-desktop-top, div[data-pla], div.MjjYud, div.g, div[data-hveid]'
+      ) || link.closest('div');
       if (!container || processedAds.has(container)) return;
       processedAds.add(container);
 
-      // Pastikan bukan Maps
-      if (container.querySelector('div[data-cid], .VkpGBb')) return;
+      // Cek apakah iklan ini merupakan Iklan Google Maps / Local Pack
+      const isMapAd = Boolean(
+        container.closest('div.VkpGBb, div.rllt__details, div[data-local-pack], #lu_map') ||
+        container.matches('div.VkpGBb, div.rllt__details, div[data-local-pack], div[data-cid]') ||
+        container.querySelector('div[data-cid], a[href*="google.com/maps"], a[href*="maps.google.com"]') ||
+        link.href.includes('google.com/maps') ||
+        link.href.includes('maps.google.com')
+      );
 
-      let heading = container.querySelector('h3');
-      const cite = container.querySelector('cite, .x2VHCd, .v5yQqb, span.VuuXrf');
-      const snippet = container.querySelector('.VwiC3b, .MUxGbd, [data-content-feature="1"]');
+      // Cek apakah iklan ini merupakan Iklan Google Shopping (PLA)
+      const isShoppingAd = Boolean(
+        container.closest('div.pla-unit, div.commercial-unit-desktop-top, div[data-pla], div[data-attrid="pla_unit"], div.pla-unit-container') ||
+        container.matches('div.pla-unit, div[data-pla]') ||
+        container.querySelector('.pla-unit-title, .sh-np__product-title, .sh-np__seller-container')
+      );
+
+      // Ekstraksi Judul Iklan (dukung h3, role=heading, heading maps, dsb)
+      let heading = container.querySelector('h3, [role="heading"], .OSrXXb, .dbg0pd, .fontHeadlineSmall, div.CCgQ5, .pla-unit-title, .sh-np__product-title, h4');
+      let adTitle = heading ? heading.textContent.trim() : '';
+      if (!adTitle && isMapAd) {
+        const mapHeading = container.querySelector('[role="heading"], .OSrXXb, .dbg0pd, .fontHeadlineSmall, span.fontTitleMedium');
+        if (mapHeading) adTitle = mapHeading.textContent.trim();
+      } else if (!adTitle && isShoppingAd) {
+        const shopHeading = container.querySelector('.pla-unit-title, .sh-np__product-title, [role="heading"]');
+        if (shopHeading) adTitle = shopHeading.textContent.trim();
+      }
+      if (!adTitle) {
+        const mainAnchor = container.querySelector('a[href*="/aclk?"], a[href*="googleadservices"]');
+        if (mainAnchor && mainAnchor.textContent.trim().length > 3) {
+          adTitle = mainAnchor.textContent.trim().split('\n')[0].trim();
+        }
+      }
+
+      // Ekstraksi Nama Pengiklan / Bisnis
+      let advertiserName = '';
+      const cite = container.querySelector('cite, .x2VHCd, .v5yQqb, span.VuuXrf, [data-dtld], .sh-np__seller-container, .E5ocAb');
+      if (cite) {
+        advertiserName = cite.textContent.trim();
+      }
 
       const finalUrl = cleanUrl(link.href);
       let domain = extractDomain(finalUrl);
 
-      if (cite) {
+      if (cite && (!domain || domain === 'google.com')) {
         const citeText = cite.textContent.trim().split(/[\s>›]/)[0].trim();
-        if (citeText.includes('.') && !citeText.includes('google')) domain = citeText.replace(/^www\./, '');
+        if (citeText.includes('.') && !citeText.includes('google')) domain = citeText.replace(/^https?:\/\//, '').replace(/^www\./, '');
+      }
+      if (!domain && isMapAd) {
+        domain = 'maps.google.com';
       }
 
-      // VALIDASI KETAT: Jangan tampilkan jika tidak ada judul / URL
-      if (!heading && !finalUrl && !domain) return;
+      const snippetEl = container.querySelector('.VwiC3b, .MUxGbd, [data-content-feature="1"], .rllt__wrapped, .wUrVib, .I6TXqe, .hG48Ns, .sh-np__price');
+      const snippet = snippetEl ? snippetEl.textContent.trim() : '';
 
-      const isBottom = Boolean(container.closest('#bottomads') || container.getBoundingClientRect().top > window.innerHeight / 1.5);
-      const placement = isBottom ? 'Bottom Ad (Sponsor Bawah)' : 'Top Ad (Sponsor Atas)';
+      // Ekstraksi seluruh teks yang ada di dalam kartu iklan untuk pencocokan nama bisnis lengkap
+      const fullText = (container.innerText || container.textContent || '').trim();
+
+      const sitelinks = [];
+      container.querySelectorAll('.usJj9c a, .bOeZT, a.l, div[data-flt="sitelink"] a').forEach(sl => {
+        const txt = sl.textContent.trim();
+        if (txt.length > 2 && !sitelinks.includes(txt)) sitelinks.push(txt);
+      });
+
+      // VALIDASI KETAT: Jangan tampilkan jika tidak ada judul, URL, maupun teks
+      if (!adTitle && !finalUrl && !domain && !fullText) return;
+
+      const isBottom = Boolean(!isMapAd && (container.closest('#bottomads') || container.getBoundingClientRect().top > window.innerHeight / 1.5));
       const adId = adRank++;
+
+      let placement = 'Top Ad (Sponsor Atas)';
+      let extra = 'Iklan Google Ads';
+
+      if (isMapAd) {
+        placement = 'Iklan Google Maps (Bersponsor)';
+        extra = 'Iklan Google Maps Bersponsor';
+      } else if (isShoppingAd) {
+        placement = 'Iklan Shopping (Bersponsor)';
+        extra = 'Iklan Google Shopping Bersponsor';
+      } else if (isBottom) {
+        placement = 'Bottom Ad (Sponsor Bawah)';
+        extra = 'Iklan Google Ads (Bawah)';
+      }
 
       items.push({
         keyword, device: deviceType, overallOrder: overallOrder++, category: 'ADS',
         adId: adId,
         placement: placement, rank: adId,
-        title: heading ? heading.textContent.trim() : (domain || 'Iklan Google'),
-        domain: domain || 'Iklan',
+        title: adTitle || advertiserName || domain || 'Iklan Google',
+        businessName: advertiserName || (isMapAd ? adTitle : ''),
+        advertiserName: advertiserName,
+        domain: domain || (isMapAd ? 'maps.google.com' : 'Iklan'),
         rawHref: link.href,
         url: finalUrl,
-        snippet: snippet ? snippet.textContent.trim() : '',
-        sitelinks: [],
-        extra: 'Iklan Google Ads',
+        snippet: snippet,
+        sitelinks: sitelinks,
+        fullText: fullText,
+        extra: extra,
+        isMapAd: isMapAd,
+        isShoppingAd: isShoppingAd,
         isBottom: isBottom
       });
+    });
+
+    // Deteksi Tambahan: Iklan Maps Bersponsor di Local Pack yang tidak memiliki link aclk langsung
+    const localPackCards = document.querySelectorAll('div[data-local-pack] div.VkpGBb, div.rllt__details');
+    localPackCards.forEach(localCard => {
+      if (processedAds.has(localCard)) return;
+      const cardText = (localCard.innerText || '').toLowerCase();
+      const isSponsored = /\b(bersponsor|sponsored|sponsor|iklan)\b/i.test(cardText) ||
+        Boolean(localCard.querySelector('[aria-label*="Sponsor" i], [aria-label*="Bersponsor" i], [aria-label*="Sponsored" i], .k8XOCe, .w3Db1'));
+
+      if (isSponsored) {
+        processedAds.add(localCard);
+        const nameEl = localCard.querySelector('[role="heading"], .OSrXXb, .dbg0pd, .fontHeadlineSmall, span.fontTitleMedium');
+        const mapAnchor = localCard.querySelector('a[href*="/aclk?"], a[href*="googleadservices"], a[href*="google.com/maps"], a[href*="maps.google.com"], a[href]');
+        const adLinkHref = mapAnchor ? (mapAnchor.getAttribute('href') || mapAnchor.href) : '';
+        const finalUrl = cleanUrl(adLinkHref);
+        const adId = adRank++;
+        const mapTitle = nameEl ? nameEl.textContent.trim() : (extractDomain(finalUrl) || 'Iklan Google Maps');
+
+        items.push({
+          keyword, device: deviceType, overallOrder: overallOrder++, category: 'ADS',
+          adId: adId,
+          placement: 'Iklan Google Maps (Bersponsor)',
+          rank: adId,
+          title: mapTitle,
+          businessName: mapTitle,
+          advertiserName: mapTitle,
+          domain: 'maps.google.com',
+          rawHref: adLinkHref || 'https://maps.google.com',
+          url: finalUrl || 'https://maps.google.com',
+          snippet: (localCard.innerText || '').replace(/\n+/g, ' • ').substring(0, 160),
+          sitelinks: [],
+          fullText: localCard.innerText || '',
+          extra: 'Iklan Google Maps Bersponsor',
+          isMapAd: true,
+          isShoppingAd: false,
+          isBottom: false
+        });
+      }
     });
 
     // 2. AI OVERVIEW
@@ -173,11 +284,12 @@ export async function extractSerpData(page, keyword, deviceType) {
       });
     }
 
-    // 3. GOOGLE MAPS
+    // 3. GOOGLE MAPS (Organik)
     const mapItems = document.querySelectorAll('div.VkpGBb, div.rllt__details, div[data-local-pack], div[data-cid]');
     const seenMapTitles = new Set();
     mapItems.forEach((m) => {
       if (m.querySelector('a[href*="youtube.com"]')) return;
+      if (processedAds.has(m)) return;
       const nameEl = m.querySelector('[role="heading"], .OSrXXb, .dbg0pd, .fontHeadlineSmall');
       const ratingEl = m.querySelector('.Y0A0hc, span[aria-label*="bintang"], .yi40Hd');
       const descEl = m.querySelector('.rllt__wrapped, .wUrVib, .I6TXqe, .hG48Ns');
@@ -263,19 +375,143 @@ export async function extractSerpData(page, keyword, deviceType) {
   }, { keyword, deviceType });
 }
 
-function normalizeDomain(d) {
-  return String(d || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+export function isProtectedOwnEntity(ad, blacklistRules = []) {
+  if (!Array.isArray(blacklistRules) || blacklistRules.length === 0) return { matched: false };
+
+  // Kumpulkan seluruh data teks dari iklan
+  const adTitle = String(ad.title || '').trim().toLowerCase();
+  const adDomain = String(ad.domain || '').trim().toLowerCase();
+  const adUrl = String(ad.url || '').trim().toLowerCase();
+  const adRawHref = String(ad.rawHref || '').trim().toLowerCase();
+  const adSnippet = String(ad.snippet || '').trim().toLowerCase();
+  const adAdvertiser = String(ad.advertiserName || ad.businessName || '').trim().toLowerCase();
+  const adFullText = String(ad.fullText || '').trim().toLowerCase();
+  const adSitelinks = Array.isArray(ad.sitelinks) ? ad.sitelinks.join(' ').toLowerCase() : '';
+
+  // Gabungkan semua teks iklan menjadi satu ruang pencarian lengkap
+  const allAdText = `${adTitle} ${adDomain} ${adAdvertiser} ${adSnippet} ${adSitelinks} ${adFullText} ${adUrl} ${adRawHref}`.toLowerCase();
+  const allAdTextClean = allAdText.replace(/[^a-z0-9]/g, ' ');
+  const allAdCompact = allAdText.replace(/[^a-z0-9]/g, '');
+
+  for (const rawRule of blacklistRules) {
+    const rule = String(rawRule || '').trim().toLowerCase();
+    if (!rule || rule.startsWith('#')) continue;
+
+    // 1. Pencocokan Langsung Substring (Case-Insensitive) di field atau full text
+    if (
+      adTitle.includes(rule) ||
+      adFullText.includes(rule) ||
+      adAdvertiser.includes(rule) ||
+      adSnippet.includes(rule) ||
+      adDomain.includes(rule) ||
+      adUrl.includes(rule) ||
+      adRawHref.includes(rule) ||
+      allAdText.includes(rule)
+    ) {
+      return { matched: true, rule: rawRule, reason: 'direct-substring' };
+    }
+
+    // 2. Pencocokan Alphanumerik Tanpa Tanda Baca (mengabaikan titik, spasi, koma)
+    // Contoh: "ANUGRAH SUPPLY MANDIRI" cocok dengan "CV. ANUGRAH SUPPLY MANDIRI" atau "Anugrah Supply Mandiri, PT"
+    const ruleCompact = rule.replace(/[^a-z0-9]/g, '');
+    if (ruleCompact.length >= 4 && allAdCompact.includes(ruleCompact)) {
+      return { matched: true, rule: rawRule, reason: 'compact-match' };
+    }
+
+    // 3. Pencocokan Semua Kata Kunci Multi-Kata (jika aturan terdiri dari beberapa kata)
+    const ruleWords = rule.split(/[\s,.-]+/).map(w => w.trim()).filter(w => w.length >= 3);
+    if (ruleWords.length >= 2) {
+      const allWordsFound = ruleWords.every(word => allAdTextClean.includes(word));
+      if (allWordsFound) {
+        return { matched: true, rule: rawRule, reason: 'token-all-words-matched' };
+      }
+    }
+
+    // 4. Pencocokan Domain / Hostname (untuk nama domain seperti "mesinprinting.id")
+    const ruleDomain = rule.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+    if (ruleDomain && ruleDomain.includes('.')) {
+      if (
+        adDomain === ruleDomain ||
+        adDomain.endsWith('.' + ruleDomain) ||
+        adUrl.includes(ruleDomain) ||
+        adRawHref.includes(ruleDomain) ||
+        allAdText.includes(ruleDomain)
+      ) {
+        return { matched: true, rule: rawRule, reason: 'domain-match' };
+      }
+    }
+  }
+
+  return { matched: false };
+}
+
+export function isTargetEntity(ad, targetRules = []) {
+  if (!Array.isArray(targetRules) || targetRules.length === 0) return { matched: false };
+
+  const adTitle = String(ad.title || '').trim().toLowerCase();
+  const adDomain = String(ad.domain || '').trim().toLowerCase();
+  const adUrl = String(ad.url || '').trim().toLowerCase();
+  const adRawHref = String(ad.rawHref || '').trim().toLowerCase();
+  const adSnippet = String(ad.snippet || '').trim().toLowerCase();
+  const adAdvertiser = String(ad.advertiserName || ad.businessName || '').trim().toLowerCase();
+  const adFullText = String(ad.fullText || '').trim().toLowerCase();
+  const allAdText = `${adTitle} ${adDomain} ${adAdvertiser} ${adSnippet} ${adFullText} ${adUrl} ${adRawHref}`.toLowerCase();
+  const allAdTextClean = allAdText.replace(/[^a-z0-9]/g, ' ');
+  const allAdCompact = allAdText.replace(/[^a-z0-9]/g, '');
+
+  for (const rawRule of targetRules) {
+    const rule = String(rawRule || '').trim().toLowerCase();
+    if (!rule || rule.startsWith('#')) continue;
+
+    if (
+      adTitle.includes(rule) ||
+      adFullText.includes(rule) ||
+      adAdvertiser.includes(rule) ||
+      adDomain.includes(rule) ||
+      adUrl.includes(rule) ||
+      allAdText.includes(rule)
+    ) {
+      return { matched: true, rule: rawRule };
+    }
+
+    const ruleCompact = rule.replace(/[^a-z0-9]/g, '');
+    if (ruleCompact.length >= 4 && allAdCompact.includes(ruleCompact)) {
+      return { matched: true, rule: rawRule };
+    }
+
+    const ruleWords = rule.split(/[\s,.-]+/).map(w => w.trim()).filter(w => w.length >= 3);
+    if (ruleWords.length >= 2 && ruleWords.every(word => allAdTextClean.includes(word))) {
+      return { matched: true, rule: rawRule };
+    }
+
+    const ruleDomain = rule.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+    if (ruleDomain && ruleDomain.includes('.')) {
+      if (
+        adDomain === ruleDomain ||
+        adDomain.endsWith('.' + ruleDomain) ||
+        adUrl.includes(ruleDomain) ||
+        allAdText.includes(ruleDomain)
+      ) {
+        return { matched: true, rule: rawRule };
+      }
+    }
+  }
+
+  return { matched: false };
 }
 
 export async function clickDetectedAds(page, adItems = [], options = {}) {
   const ownDomains = (Array.isArray(options.ownDomains) ? options.ownDomains : [])
-    .map(normalizeDomain)
-    .filter(Boolean);
+    .map(s => String(s || '').trim())
+    .filter(s => s.length > 0 && !s.startsWith('#'));
+
   const targetAds = (Array.isArray(options.targetAds) ? options.targetAds : [])
-    .map(normalizeDomain)
-    .filter(Boolean);
+    .map(s => String(s || '').trim())
+    .filter(s => s.length > 0 && !s.startsWith('#'));
+
   const targetOnly = options.targetOnly === true;
   const clickBottomAds = options.clickBottomAds === true;
+  const skipMapAds = options.skipMapAds === true;
   const maxClicks = Math.max(1, Number(options.maxClicks) || 3);
   const clickDelayMs = Math.max(500, Number(options.clickDelayMs) || 1000);
 
@@ -283,51 +519,38 @@ export async function clickDetectedAds(page, adItems = [], options = {}) {
   const classifiedAds = [];
 
   for (const ad of adItems) {
-    const rawHref = (ad.rawHref || ad.url || '').toLowerCase();
-    const domain = (ad.domain || '').toLowerCase();
-    const url = (ad.url || '').toLowerCase();
-    const title = (ad.title || '').toLowerCase();
-
-    // 1. Cek apakah ini domain sendiri yang dilindungi (Blacklist)
-    let matchedOwn = null;
-    const isOwn = ownDomains.some(own => {
-      const d = own.toLowerCase().trim();
-      if (!d) return false;
-      if (domain.includes(d) || url.includes(d) || rawHref.includes(d) || title.includes(d)) {
-        matchedOwn = d;
-        return true;
-      }
-      return false;
-    });
-
-    if (isOwn) {
+    // 1. Cek proteksi domain / nama bisnis sendiri (Blacklist) TERLEBIH DAHULU!
+    const ownCheck = isProtectedOwnEntity(ad, ownDomains);
+    if (ownCheck.matched) {
       result.skipped.push({
         adId: ad.adId,
         title: ad.title,
         domain: ad.domain,
-        matchedDomain: matchedOwn,
+        matchedDomain: ownCheck.rule,
         placement: ad.placement,
         reason: 'own-domain'
       });
       continue;
     }
 
-    // 2. Cek apakah ini iklan target khusus yang ditentukan (Whitelist)
-    let matchedTarget = null;
-    let isTarget = false;
-    if (targetAds.length > 0) {
-      isTarget = targetAds.some(tgt => {
-        const t = tgt.toLowerCase().trim();
-        if (!t) return false;
-        if (domain.includes(t) || url.includes(t) || rawHref.includes(t) || title.includes(t)) {
-          matchedTarget = t;
-          return true;
-        }
-        return false;
+    // 2. Cek apakah ini Iklan Google Maps dan opsi lewati iklan Maps aktif
+    if (ad.isMapAd && skipMapAds) {
+      result.skipped.push({
+        adId: ad.adId,
+        title: ad.title,
+        domain: ad.domain,
+        placement: ad.placement,
+        reason: 'map-ads-disabled'
       });
+      continue;
     }
 
-    // 3. Jika mode target-only aktif dan iklan ini bukan target, lewati
+    // 3. Cek apakah ini iklan target khusus yang ditentukan (Whitelist)
+    const targetCheck = isTargetEntity(ad, targetAds);
+    const isTarget = targetCheck.matched;
+    const matchedTarget = targetCheck.rule;
+
+    // 4. Jika mode target-only aktif dan iklan ini bukan target, lewati
     if (targetOnly && targetAds.length > 0 && !isTarget) {
       result.skipped.push({
         adId: ad.adId,
@@ -339,7 +562,7 @@ export async function clickDetectedAds(page, adItems = [], options = {}) {
       continue;
     }
 
-    // 4. Cek sponsor bawah
+    // 5. Cek sponsor bawah
     if (ad.isBottom && !clickBottomAds) {
       result.skipped.push({
         adId: ad.adId,
@@ -472,6 +695,7 @@ export async function scanKeywordOnDevice(browser, keyword, deviceKey, options =
           targetAds: options.targetAds,
           targetOnly: options.targetOnly === true,
           clickBottomAds: options.clickBottomAds === true,
+          skipMapAds: options.skipMapAds === true,
           maxClicks: options.maxClicks || 3,
           clickDelayMs: options.clickDelayMs || 1000
         });
@@ -497,7 +721,10 @@ export async function scanKeywordOnDevice(browser, keyword, deviceKey, options =
           it.isClicked = false;
           if (foundSkipped.reason === 'own-domain') {
             it.clickStatus = 'SKIPPED_OWN_DOMAIN';
-            it.clickDetails = `Dilewati (Domain Sendiri: ${foundSkipped.matchedDomain || 'Terproteksi'})`;
+            it.clickDetails = `Dilewati (Milik Sendiri / Terproteksi: ${foundSkipped.matchedDomain || 'Blacklist'})`;
+          } else if (foundSkipped.reason === 'map-ads-disabled') {
+            it.clickStatus = 'SKIPPED_MAP_DISABLED';
+            it.clickDetails = 'Dilewati (Opsi iklan Google Maps dinonaktifkan)';
           } else if (foundSkipped.reason === 'not-in-target-list') {
             it.clickStatus = 'SKIPPED_NOT_TARGET';
             it.clickDetails = 'Dilewati (Bukan target yang di-whitelist)';

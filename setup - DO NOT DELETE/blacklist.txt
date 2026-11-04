@@ -1,8 +1,18 @@
-# DAFTAR DOMAIN SENDIRI (BLACKLIST)
-# Masukkan nama domain milik Anda sendiri yang TIDAK boleh diklik saat fitur klik iklan aktif.
-# Masukkan 1 domain per baris (atau pisahkan dengan koma).
+# DAFTAR BLACKLIST (DOMAIN & NAMA BISNIS / BRAND SENDIRI)
+# Masukkan nama domain web atau NAMA BISNIS / BRAND milik Anda sendiri yang TIDAK BOLEH DIKLIK saat fitur klik iklan aktif.
+# Sistem secara otomatis memeriksa dan melindungi semua model iklan Google:
+# 1. Iklan Pencarian Google (Search Ads Atas & Bawah)
+# 2. Iklan Google Maps (Local 3-Pack Sponsored, Promoted Map Pins, dsb)
+# 3. Iklan Google Shopping (Product Listing Ads / PLA)
+# 4. Iklan Ekstensi Lokasi / Alamat Profil Bisnis
+#
+# Masukkan 1 entri per baris (atau pisahkan dengan koma).
 # Baris yang diawali tanda pagar (#) akan diabaikan.
+#
 # Contoh:
-# domain-anda.com
-# website-saya.id
+# mesinprinting.id
+# ANUGRAH SUPPLY MANDIRI
+# anugrah supply
 
+mesinprinting.id
+ANUGRAH SUPPLY MANDIRI

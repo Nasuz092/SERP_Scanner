@@ -64,9 +64,12 @@ function loadBlacklistFile() {
   try {
     const raw = fs.readFileSync(BLACKLIST_FILE, 'utf8');
     return raw
-      .split(/[\r\n,]+/)
-      .map(line => line.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0])
-      .filter(line => line.length > 0 && !line.startsWith('#'));
+      .split(/[\r\n]+/)
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && !line.startsWith('#'))
+      .flatMap(line => line.split(','))
+      .map(item => item.trim())
+      .filter(item => item.length > 0 && !item.startsWith('#'));
   } catch (e) {
     return [];
   }
@@ -76,6 +79,7 @@ function loadConfigFile() {
   const cfg = {
     delaySeconds: 3,
     headless: true,
+    skipMapAds: false,
     targetAds: []
   };
   if (!fs.existsSync(CONFIG_FILE)) return cfg;
@@ -93,8 +97,10 @@ function loadConfigFile() {
         if (!isNaN(num) && num > 0) cfg.delaySeconds = num;
       } else if (key === 'HEADLESS') {
         cfg.headless = val.toLowerCase() !== 'false';
+      } else if (key === 'SKIP_MAP_ADS') {
+        cfg.skipMapAds = val.toLowerCase() === 'true';
       } else if (key === 'TARGET_ADS') {
-        cfg.targetAds = val.split(',').map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0]).filter(Boolean);
+        cfg.targetAds = val.split(',').map(s => s.trim()).filter(Boolean);
       }
     }
   } catch (e) {}
@@ -120,6 +126,7 @@ let scanSession = {
   targetAds: [...defaultAppConfig.targetAds],
   targetOnly: false,
   clickBottomAds: false,
+  skipMapAds: defaultAppConfig.skipMapAds === true,
   maxClicksPerKeyword: 3,
   clickSummary: { totalClicked: 0, totalSkipped: 0, details: [] },
 
@@ -182,7 +189,7 @@ async function runScanSession() {
   );
   if (scanSession.clickAds) {
     addLog(
-      `🖱️ Mode Klik Iklan AKTIF — maks ${scanSession.maxClicksPerKeyword} klik/keyword. Own-domain dilewati: ${scanSession.ownDomains.join(', ')}`,
+      `Mode Klik Iklan AKTIF - maks ${scanSession.maxClicksPerKeyword} klik/keyword. Terproteksi di blacklist: ${scanSession.ownDomains.join(', ')}`,
       'warning'
     );
   }
@@ -193,7 +200,7 @@ async function runScanSession() {
     addLog(`Membuka browser Google Chrome / MS Edge (Headless: ${scanSession.headless})...`, 'info');
     if (scanSession.proxy) {
       const sanitizedProxy = scanSession.proxy.replace(/:[^:@]*@/, ':***@');
-      addLog(`🌐 Menggunakan Proxy Server: ${sanitizedProxy}`, 'info');
+      addLog(`Menggunakan Proxy Server: ${sanitizedProxy}`, 'info');
     }
     browser = await createBrowser(scanSession.headless, scanSession.proxy);
     addLog(`Browser berhasil diluncurkan dengan Anti-Detection Stealth bypass.`, 'success');
@@ -229,6 +236,7 @@ async function runScanSession() {
         targetAds: scanSession.targetAds,
         targetOnly: scanSession.targetOnly === true,
         clickBottomAds: scanSession.clickBottomAds === true,
+        skipMapAds: scanSession.skipMapAds === true,
         maxClicks: scanSession.maxClicksPerKeyword || 3,
         clickDelayMs: 1000
       });
@@ -261,37 +269,39 @@ async function runScanSession() {
 
           if (scanSession.clickAds) {
             if (f > 0) {
-              addLog(`🎯 [IKLAN DITEMUKAN] "${task.keyword}" (${task.device}): ${f} iklan terdeteksi.`, 'info');
+              addLog(`[IKLAN DITEMUKAN] "${task.keyword}" (${task.device}): ${f} iklan terdeteksi.`, 'info');
               for (const sk of (res.clickSummary.skipped || [])) {
                 if (sk.reason === 'own-domain') {
-                  addLog(`🛡️ [DILEWATI - DOMAIN SENDIRI] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) TIDAK diklik demi melindungi budget sendiri (Domain: ${sk.matchedDomain || 'terproteksi'}).`, 'warning');
+                  addLog(`[DILEWATI - MILIK SENDIRI] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) TIDAK diklik demi melindungi budget sendiri (Aturan blacklist: ${sk.matchedDomain || 'terproteksi'}).`, 'warning');
+                } else if (sk.reason === 'map-ads-disabled') {
+                  addLog(`[DILEWATI - IKLAN MAPS] Iklan Maps #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena opsi 'Abaikan semua Iklan Maps' aktif.`, 'info');
                 } else if (sk.reason === 'not-in-target-list') {
-                  addLog(`ℹ️ [DILEWATI - BUKAN TARGET] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena bukan target yang di-whitelist.`, 'info');
+                  addLog(`[DILEWATI - BUKAN TARGET] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena bukan target yang di-whitelist.`, 'info');
                 } else if (sk.reason === 'bottom-ads-disabled') {
-                  addLog(`ℹ️ [DILEWATI - SPONSOR BAWAH] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena opsi 'Klik iklan bawah' nonaktif.`, 'info');
+                  addLog(`[DILEWATI - SPONSOR BAWAH] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena opsi 'Klik iklan bawah' nonaktif.`, 'info');
                 } else if (sk.reason === 'over-max-clicks') {
-                  addLog(`ℹ️ [DILEWATI - KUOTA KLIK] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena kuota maks (${scanSession.maxClicksPerKeyword} klik/kw) sudah terpenuhi.`, 'info');
+                  addLog(`[DILEWATI - KUOTA KLIK] Iklan #${sk.adId} "${sk.title}" (${sk.domain}) dilewati karena kuota maks (${scanSession.maxClicksPerKeyword} klik/kw) sudah terpenuhi.`, 'info');
                 } else {
-                  addLog(`ℹ️ [DILEWATI] Iklan #${sk.adId} "${sk.title}" (${sk.domain}): ${sk.reason}`, 'info');
+                  addLog(`[DILEWATI] Iklan #${sk.adId} "${sk.title}" (${sk.domain}): ${sk.reason}`, 'info');
                 }
               }
               for (const cl of (res.clickSummary.clicked || [])) {
                 if (cl.isTarget) {
-                  addLog(`🎯 [KLIK TARGET UTAMA] Iklan Target #${cl.adId} "${cl.title}" (${cl.domain}) [Target: ${cl.matchedTarget}] BERHASIL DIKLIK via ${cl.method} (${Math.round((cl.dwellMs || 2500)/1000)}s)!`, 'success');
+                  addLog(`[KLIK TARGET UTAMA] Iklan Target #${cl.adId} "${cl.title}" (${cl.domain}) [Target: ${cl.matchedTarget}] BERHASIL DIKLIK via ${cl.method} (${Math.round((cl.dwellMs || 2500)/1000)}s)!`, 'success');
                 } else {
-                  addLog(`🖱️ [BERHASIL DIKLIK] Iklan Kompetitor #${cl.adId} "${cl.title}" (${cl.domain}) berhasil dibuka via ${cl.method} (${Math.round((cl.dwellMs || 2500)/1000)}s).`, 'success');
+                  addLog(`[BERHASIL DIKLIK] Iklan Kompetitor #${cl.adId} "${cl.title}" (${cl.domain}) berhasil dibuka via ${cl.method} (${Math.round((cl.dwellMs || 2500)/1000)}s).`, 'success');
                 }
               }
             } else {
-              addLog(`ℹ️ [IKLAN] "${task.keyword}" (${task.device}): Tidak ada iklan yang tampil di halaman ini.`, 'debug');
+              addLog(`[IKLAN] "${task.keyword}" (${task.device}): Tidak ada iklan yang tampil di halaman ini.`, 'debug');
             }
           } else if (adsCount > 0) {
-            addLog(`ℹ️ [IKLAN TERDETEKSI] "${task.keyword}" (${task.device}): Ditemukan ${adsCount} iklan di Google, namun opsi 'Klik Iklan' sedang nonaktif.`, 'info');
+            addLog(`[IKLAN TERDETEKSI] "${task.keyword}" (${task.device}): Ditemukan ${adsCount} iklan di Google, namun opsi 'Klik Iklan' sedang nonaktif.`, 'info');
           }
         }
 
         if (res.items.length > 0) {
-          addLog(`✔ Selesai: "${task.keyword}" (${task.device}) -> ${orgCount} Organik, ${adsCount} Iklan, ${mapCount} Maps`, 'success');
+          addLog(`[SUKSES] Selesai: "${task.keyword}" (${task.device}) -> ${orgCount} Organik, ${adsCount} Iklan, ${mapCount} Maps`, 'success');
         }
 
         consecutiveCaptchaErrors = 0;
@@ -300,11 +310,11 @@ async function runScanSession() {
         });
       } else {
         // Tangkap pesan error dari scanner (misal: CAPTCHA)
-        addLog(`✖ Gagal pada "${task.keyword}" (${task.device}): ${res.error}`, 'error');
+        addLog(`[GAGAL] Gagal pada "${task.keyword}" (${task.device}): ${res.error}`, 'error');
         if (res.error && res.error.includes('BLOKIR_CAPTCHA')) {
           consecutiveCaptchaErrors++;
           if (consecutiveCaptchaErrors >= 2) {
-            addLog(`⛔ PENGHENTIAN KEAMANAN OTOMATIS: Terdeteksi blokir CAPTCHA Google berturut-turut! Pemindaian otomatis dihentikan agar IP Anda tidak di-blacklist oleh Google. Harap ganti koneksi IP (misal: mode pesawat HP / restart modem).`, 'error');
+            addLog(`PENGHENTIAN KEAMANAN OTOMATIS: Terdeteksi blokir CAPTCHA Google berturut-turut! Pemindaian otomatis dihentikan agar IP Anda tidak di-blacklist oleh Google. Harap ganti koneksi IP (misal: mode pesawat HP / restart modem).`, 'error');
             scanSession.shouldStop = true;
           }
         }
@@ -326,7 +336,7 @@ async function runScanSession() {
       scanSession.status = 'completed';
       scanSession.completedAt = new Date().toISOString();
       addLog(
-        `🎉 Pemindaian seluruh kata kunci selesai! Total ${scanSession.results.length} item tersimpan.` +
+        `Pemindaian seluruh kata kunci selesai! Total ${scanSession.results.length} item tersimpan.` +
         (scanSession.clickAds
           ? ` (Klik iklan: ${scanSession.clickSummary.totalClicked} berhasil, ${scanSession.clickSummary.totalSkipped} dilewati)`
           : ''),
@@ -373,6 +383,7 @@ function getSessionStatus() {
       targetAds: scanSession.targetAds,
       targetOnly: scanSession.targetOnly,
       clickBottomAds: scanSession.clickBottomAds,
+      skipMapAds: scanSession.skipMapAds,
       maxClicksPerKeyword: scanSession.maxClicksPerKeyword,
       totalClicked: scanSession.clickSummary.totalClicked,
       totalSkipped: scanSession.clickSummary.totalSkipped
@@ -653,16 +664,17 @@ const server = http.createServer(async (req, res) => {
         scanSession.clickAds = payload.clickAds === true;
         scanSession.ownDomains = Array.isArray(payload.ownDomains) && payload.ownDomains.length
           ? payload.ownDomains
-            .map(d => String(d).trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0])
-            .filter(Boolean)
-          : [...DEFAULT_OWN_DOMAINS];
+            .map(d => String(d).trim())
+            .filter(d => d.length > 0 && !d.startsWith('#'))
+          : [...defaultOwnDomains];
         scanSession.targetAds = Array.isArray(payload.targetAds)
           ? payload.targetAds
-            .map(d => String(d).trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0])
-            .filter(Boolean)
+            .map(d => String(d).trim())
+            .filter(d => d.length > 0 && !d.startsWith('#'))
           : [];
         scanSession.targetOnly = payload.targetOnly === true;
         scanSession.clickBottomAds = payload.clickBottomAds === true;
+        scanSession.skipMapAds = payload.skipMapAds === true;
         scanSession.maxClicksPerKeyword = Math.max(1, Math.min(10, Number(payload.maxClicksPerKeyword) || 3));
         scanSession.clickSummary = { totalClicked: 0, totalSkipped: 0, details: [] };
 
@@ -740,7 +752,7 @@ const server = http.createServer(async (req, res) => {
           fs.writeFileSync(KEYWORDS_FILE, content, 'utf8');
         }
         if (Array.isArray(payload.ownDomains)) {
-          const content = '# DAFTAR DOMAIN SENDIRI (BLACKLIST)\n# 1 domain per baris\n\n' + payload.ownDomains.join('\n') + '\n';
+          const content = '# DAFTAR BLACKLIST (DOMAIN & NAMA BISNIS / BRAND SENDIRI)\n# 1 entri per baris\n\n' + payload.ownDomains.join('\n') + '\n';
           fs.writeFileSync(BLACKLIST_FILE, content, 'utf8');
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -760,6 +772,7 @@ const server = http.createServer(async (req, res) => {
       enabled: scanSession.clickAds === true,
       ownDomains: scanSession.ownDomains,
       clickBottomAds: scanSession.clickBottomAds,
+      skipMapAds: scanSession.skipMapAds,
       maxClicksPerKeyword: scanSession.maxClicksPerKeyword,
       summary: scanSession.clickSummary
     }));

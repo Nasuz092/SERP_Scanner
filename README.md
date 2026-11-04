@@ -72,9 +72,12 @@ Menu unduhan kustom dengan animasi transisi yang menyediakan 3 format ekspor:
 - **CSV Spreadsheet (.CSV)**: File teks nilai terpisah koma berstandar UTF-8 BOM.
 - **Data JSON (.JSON)**: Struktur data mentah terstruktur untuk integrasi database atau pipeline data.
 
-### 5. Pengujian Klik Iklan dan Proteksi Blacklist
+### 5. Pengujian Klik Iklan dan Proteksi Blacklist Multi-Model
 - Fitur simulasi klik iklan kompetitor untuk keperluan Quality Assurance (QA).
-- Sistem blacklist domain sendiri via file `setup - DO NOT DELETE/blacklist.txt` untuk memastikan domain pribadi tidak pernah terklik.
+- Deteksi komprehensif seluruh model iklan Google: Iklan Pencarian (Top/Bottom Ads), Iklan Google Maps (Local 3-Pack Sponsored, Promoted Map Pins), Iklan Google Shopping (PLA), dan Iklan Ekstensi Lokasi/Bisnis.
+- Sistem proteksi blacklist tingkat lanjut via file `setup - DO NOT DELETE/blacklist.txt`: mendukung daftar nama domain web sekaligus NAMA BISNIS / BRAND (misal: `mesinprinting.id`, `ANUGRAH SUPPLY MANDIRI`).
+- Algoritma pencocokan multi-lapis (pencocokan substring, token kata kunci, alphanumerik tanpa tanda baca, serta pengecekan teks kartu iklan secara menyeluruh) untuk memastikan iklan dan profil Google Maps milik Anda tidak akan pernah terklik secara otomatis.
+- Opsi lewati semua Iklan Google Maps bagi pengguna yang hanya ingin menargetkan iklan peramban web reguler.
 - Opsi whitelist khusus untuk menargetkan hanya domain iklan tertentu yang diinginkan.
 - Batasan maksimal klik per kata kunci yang dapat dikonfigurasi secara presisi.
 
@@ -136,15 +139,16 @@ Daftar kata kunci awal yang akan langsung terisi pada form input setiap kali tom
 - Format: Masukkan satu kata kunci per baris.
 
 ### 2. `blacklist.txt`
-Daftar domain milik sendiri yang wajib dilindungi dari aksi klik otomatis.
-- Format: Pisahkan nama domain dengan tanda koma (contoh: `domain-anda.com, website-saya.id`).
+Daftar domain website dan nama bisnis/brand sendiri yang wajib dilindungi dari aksi klik otomatis.
+- Format: Masukkan domain atau nama bisnis satu per baris atau pisahkan dengan tanda koma (contoh: `mesinprinting.id`, `ANUGRAH SUPPLY MANDIRI`).
+- Proteksi berlaku untuk seluruh model iklan Google (Iklan Pencarian Web, Iklan Google Maps Local Pack, Iklan Shopping, maupun Ekstensi Lokasi).
 
 ### 3. `config.txt`
 Pengaturan preferensi awal saat server dinyalakan:
-- `DEFAULT_DELAY`: Jeda default antar pencarian dalam detik (1 sampai 15).
-- `DEFAULT_HEADLESS`: Nilai `true` untuk mode latar belakang, atau `false` untuk menampilkan peramban secara visual.
-- `DEFAULT_MAX_CLICKS`: Batas maksimal klik iklan per kata kunci (1 sampai 10).
-- `DEFAULT_CLICK_BOTTOM_ADS`: Nilai `true` atau `false` untuk mengizinkan klik pada iklan bagian bawah.
+- `DELAY_SECONDS`: Jeda default antar pencarian dalam detik (1 sampai 15).
+- `HEADLESS`: Nilai `true` untuk mode latar belakang, atau `false` untuk menampilkan peramban secara visual.
+- `SKIP_MAP_ADS`: Nilai `true` untuk otomatis melewati seluruh iklan Google Maps, atau `false` untuk mengizinkan klik pada iklan Maps kompetitor.
+- `TARGET_ADS`: Daftar domain atau nama iklan kompetitor yang wajib diklik (whitelist).
 
 ---
 

@@ -32,6 +32,7 @@
   const targetAdsInput = document.getElementById('targetAdsInput');
   const targetOnlyCheckbox = document.getElementById('targetOnlyCheckbox');
   const clickBottomAdsCheckbox = document.getElementById('clickBottomAdsCheckbox');
+  const skipMapAdsCheckbox = document.getElementById('skipMapAdsCheckbox');
   const maxClicksInput = document.getElementById('maxClicksInput');
   const clickInfoBadge = document.getElementById('clickInfoBadge');
 
@@ -100,18 +101,18 @@
   function getOwnDomains() {
     if (!ownDomainsInput) return [];
     return ownDomainsInput.value
-      .split(',')
-      .map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
-      .filter(Boolean);
+      .split(/[\r\n,]+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0 && !s.startsWith('#'));
   }
 
   // Parse targetAds input into array
   function getTargetAds() {
     if (!targetAdsInput) return [];
     return targetAdsInput.value
-      .split(',')
-      .map(s => s.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
-      .filter(Boolean);
+      .split(/[\r\n,]+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0 && !s.startsWith('#'));
   }
 
   // Update click info badge
@@ -349,9 +350,17 @@
       return `
         <div class="mt-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/90 text-blue-900">
           <div class="flex items-center gap-1.5 font-bold text-xs text-blue-800">
-            <span>DILEWATI (DOMAIN SENDIRI)</span>
+            <span>DILEWATI (MILIK SENDIRI / TERPROTEKSI)</span>
           </div>
-          <span class="text-[11px] text-blue-600 block mt-0.5">Domain ini masuk daftar proteksi domain sendiri: ${escapeHtml(item.domain || '')}</span>
+          <span class="text-[11px] text-blue-700 block mt-0.5">${escapeHtml(item.clickDetails || 'Iklan ini terproteksi dalam daftar domain/bisnis sendiri.')}</span>
+        </div>
+      `;
+    }
+    if (item.clickStatus === 'SKIPPED_MAP_DISABLED') {
+      return `
+        <div class="mt-2 p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-[11px]">
+          <span class="font-semibold text-slate-700">Iklan Google Maps (Dilewati)</span>
+          <span class="text-[10px] text-slate-500 block mt-0.5">Opsi 'Abaikan semua Iklan Maps' aktif.</span>
         </div>
       `;
     }
@@ -656,14 +665,16 @@
     const targetAds = getTargetAds();
     const targetOnly = targetOnlyCheckbox && targetOnlyCheckbox.checked;
     const clickBottomAds = clickBottomAdsCheckbox && clickBottomAdsCheckbox.checked;
+    const skipMapAds = skipMapAdsCheckbox && skipMapAdsCheckbox.checked;
     const maxClicksPerKeyword = Math.max(1, Math.min(10, Number(maxClicksInput && maxClicksInput.value) || 3));
 
     if (clickAds) {
       const confirmed = confirm(
         'PERINGATAN KLIK IKLAN\n\n' +
-        'Fitur ini akan MENGKLIK iklan Google Ads yang terdeteksi di halaman hasil pencarian.\n\n' +
-        'Iklan dari domain berikut akan DILEWATI otomatis:\n' +
-        (ownDomains.length ? ownDomains.map(d => '  • ' + d).join('\n') : '  (tidak ada — semua iklan akan diklik!)') + '\n\n' +
+        'Fitur ini akan MENGKLIK iklan Google Ads yang terdeteksi di hasil pencarian.\n\n' +
+        'Daftar domain & nama bisnis sendiri yang DILINDUNGI (TIDAK AKAN DIKLIK):\n' +
+        (ownDomains.length ? ownDomains.map(d => '  - ' + d).join('\n') : '  (tidak ada - semua iklan akan diklik!)') + '\n\n' +
+        (skipMapAds ? 'Semua Iklan Google Maps: DILEWATI (opsi abaikan iklan maps aktif)\n\n' : '') +
         'Mengklik iklan pihak lain bisa melanggar ToS Google Ads. Gunakan hanya untuk riset/QA iklan Anda sendiri.\n\n' +
         'Lanjutkan?'
       );
@@ -691,6 +702,7 @@
           targetAds,
           targetOnly,
           clickBottomAds,
+          skipMapAds,
           maxClicksPerKeyword
         })
       });
@@ -702,7 +714,7 @@
       } else {
         appendLog(`Memulai scan ${keywords.length} kata kunci di ${devices.join(', ')}...`, 'success');
         if (clickAds) {
-          appendLog(`Mode Klik Iklan AKTIF — own-domain dilewati: ${ownDomains.join(', ') || '(tidak ada)'}`, 'warning');
+          appendLog(`Mode Klik Iklan AKTIF — Terproteksi di blacklist: ${ownDomains.join(', ') || '(tidak ada)'}`, 'warning');
         }
       }
     } catch (err) {
@@ -820,6 +832,9 @@
           targetOnlyCheckbox.checked = !!data.clickInfo.targetOnly;
         }
         if (clickBottomAdsCheckbox) clickBottomAdsCheckbox.checked = !!data.clickInfo.clickBottomAds;
+        if (skipMapAdsCheckbox && data.clickInfo.skipMapAds !== undefined) {
+          skipMapAdsCheckbox.checked = !!data.clickInfo.skipMapAds;
+        }
         if (maxClicksInput && data.clickInfo.maxClicksPerKeyword) {
           maxClicksInput.value = data.clickInfo.maxClicksPerKeyword;
         }
@@ -981,6 +996,9 @@
         }
         if (data.config.headless !== undefined && headlessCheckbox) {
           headlessCheckbox.checked = data.config.headless;
+        }
+        if (data.config.skipMapAds !== undefined && skipMapAdsCheckbox) {
+          skipMapAdsCheckbox.checked = data.config.skipMapAds;
         }
         if (Array.isArray(data.config.targetAds) && data.config.targetAds.length > 0 && targetAdsInput && !targetAdsInput.value.trim()) {
           targetAdsInput.value = data.config.targetAds.join(', ');
