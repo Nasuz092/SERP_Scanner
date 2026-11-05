@@ -55,11 +55,38 @@
     </div>
 
     <!-- Right Header Status & Action -->
-    <div class="flex items-center space-x-3">
-      <div id="sessionStatusPill" class="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
+    <div class="flex items-center space-x-2.5">
+      <div id="sessionStatusPill" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
         <span id="sessionStatusText">Siap (Idle)</span>
       </div>
+
+      <div class="h-5 w-px bg-slate-200 mx-1"></div>
+
+      <!-- Action Buttons -->
+      <button id="btnHeaderFolder" type="button" title="Buka folder konfigurasi dan file data (setup - DO NOT DELETE)"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
+        <img src="icons/folder.png" alt="" class="w-4 h-4 object-contain">
+        <span>Folder Data</span>
+      </button>
+
+      <button id="btnHeaderRestart" type="button" title="Muat ulang server scanner"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
+        <img src="icons/restart.png" alt="" class="w-4 h-4 object-contain">
+        <span>Restart Server</span>
+      </button>
+
+      <button id="btnHeaderTerminal" type="button" title="Tampilkan jendela log terminal server"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
+        <img src="icons/terminal.png" alt="" class="w-4 h-4 object-contain">
+        <span>Log Terminal</span>
+      </button>
+
+      <button id="btnHeaderBrowser" type="button" title="Buka dashboard ini di web browser eksternal (Chrome / Edge)"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
+        <img src="icons/computer.png" alt="" class="w-4 h-4 object-contain">
+        <span>Browser Luar</span>
+      </button>
     </div>
   </header>
 

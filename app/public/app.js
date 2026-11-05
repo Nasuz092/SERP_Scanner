@@ -1009,6 +1009,33 @@
     }
   }
 
+  // Top Header Action Buttons
+  function triggerAppAction(action) {
+    if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === 'function') {
+      window.chrome.webview.postMessage(action);
+      return;
+    }
+    fetch('/api/action/' + encodeURIComponent(action), { method: 'POST' }).catch(() => {});
+  }
+
+  const btnHeaderFolder = document.getElementById('btnHeaderFolder');
+  const btnHeaderRestart = document.getElementById('btnHeaderRestart');
+  const btnHeaderTerminal = document.getElementById('btnHeaderTerminal');
+  const btnHeaderBrowser = document.getElementById('btnHeaderBrowser');
+
+  if (btnHeaderFolder) {
+    btnHeaderFolder.addEventListener('click', () => triggerAppAction('open-folder'));
+  }
+  if (btnHeaderRestart) {
+    btnHeaderRestart.addEventListener('click', () => triggerAppAction('restart-server'));
+  }
+  if (btnHeaderTerminal) {
+    btnHeaderTerminal.addEventListener('click', () => triggerAppAction('toggle-terminal'));
+  }
+  if (btnHeaderBrowser) {
+    btnHeaderBrowser.addEventListener('click', () => triggerAppAction('open-browser'));
+  }
+
   // Init
   loadInitialConfig();
   updateKeywordCount();

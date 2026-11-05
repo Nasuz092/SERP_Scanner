@@ -765,6 +765,38 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // API: App Action (Folder Data, Restart Server, Browser Luar)
+  if (pathname.startsWith('/api/action/') && req.method === 'POST') {
+    const action = pathname.replace('/api/action/', '').toLowerCase();
+    if (action === 'open-folder') {
+      import('node:child_process').then(cp => {
+        cp.exec(`explorer.exe "${SETUP_DIR}"`);
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, action }));
+      return;
+    }
+    if (action === 'open-browser') {
+      import('node:child_process').then(cp => {
+        cp.exec(`start http://${ACCESS_HOST || '127.0.0.1'}:${PORT}`);
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, action }));
+      return;
+    }
+    if (action === 'restart-server') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, action }));
+      setTimeout(() => {
+        process.exit(0);
+      }, 300);
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, action }));
+    return;
+  }
+
   // API: Click Ads Report (audit)
   if (pathname === '/api/scan/click-report' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
