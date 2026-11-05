@@ -135,7 +135,7 @@ namespace GoogleSerpScannerApp
         {
             this.Text = "Google SERP Scanner";
             this.ClientSize = new Size(1320, 860);
-            this.MinimumSize = new Size(1024, 650);
+            this.MinimumSize = new Size(400, 320);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 250, 252);
             this.ForeColor = Color.FromArgb(15, 23, 42);

@@ -41,57 +41,57 @@
 <body class="bg-[#f8fafc] text-slate-800 min-h-screen font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
   <!-- Top Navigation Bar -->
-  <header class="border-b border-slate-200/90 bg-white sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between shadow-xs">
-    <div class="flex items-center space-x-3.5">
-      <div class="w-10 h-10 rounded-xl bg-white border border-slate-200/90 flex items-center justify-center p-1.5 shadow-xs overflow-hidden">
+  <header class="border-b border-slate-200/90 bg-white sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 shadow-xs">
+    <div class="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0 flex-shrink">
+      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200/90 flex items-center justify-center p-1.5 shadow-xs overflow-hidden flex-shrink-0">
         <img src="icons/logo.png" alt="Google SERP Scanner" class="w-full h-full object-contain">
       </div>
-      <div>
+      <div class="min-w-0">
         <div class="flex items-center gap-2">
-          <h1 class="text-lg font-bold tracking-tight text-slate-900">Google SERP Scanner</h1>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 truncate">Google SERP Scanner</h1>
         </div>
-        <p class="text-xs text-slate-500 mt-0.5">Scan Halaman 1 Google Multi-Device (Desktop, Mobile, Tablet) &amp; Deteksi Organik, Ads, Maps</p>
+        <p class="text-xs text-slate-500 mt-0.5 truncate hidden xl:block">Scan Halaman 1 Google Multi-Device (Desktop, Mobile, Tablet) &amp; Deteksi Organik, Ads, Maps</p>
       </div>
     </div>
 
     <!-- Right Header Status & Action -->
-    <div class="flex items-center space-x-2.5">
-      <div id="sessionStatusPill" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
+    <div class="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
+      <div id="sessionStatusPill" class="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700 whitespace-nowrap flex-shrink-0">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
         <span id="sessionStatusText">Siap (Idle)</span>
       </div>
 
-      <div class="h-5 w-px bg-slate-200 mx-1"></div>
+      <div class="h-5 w-px bg-slate-200 mx-0.5 sm:mx-1 hidden sm:block"></div>
 
       <!-- Action Buttons -->
-      <button id="btnHeaderFolder" type="button" title="Buka folder konfigurasi dan file data (setup - DO NOT DELETE)"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
-        <img src="icons/folder.png" alt="" class="w-4 h-4 object-contain">
-        <span>Folder Data</span>
+      <button id="btnHeaderFolder" type="button" title="Folder Data: Buka folder konfigurasi dan file data (setup - DO NOT DELETE)"
+        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer whitespace-nowrap flex-shrink-0">
+        <img src="icons/folder.png" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+        <span class="hidden md:inline">Folder Data</span>
       </button>
 
-      <button id="btnHeaderRestart" type="button" title="Muat ulang server scanner"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
-        <img src="icons/restart.png" alt="" class="w-4 h-4 object-contain">
-        <span>Restart Server</span>
+      <button id="btnHeaderRestart" type="button" title="Restart Server: Muat ulang server scanner"
+        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer whitespace-nowrap flex-shrink-0">
+        <img src="icons/restart.png" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+        <span class="hidden md:inline">Restart Server</span>
       </button>
 
-      <button id="btnHeaderTerminal" type="button" title="Tampilkan jendela log terminal server"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
-        <img src="icons/terminal.png" alt="" class="w-4 h-4 object-contain">
-        <span>Log Terminal</span>
+      <button id="btnHeaderTerminal" type="button" title="Log Terminal: Tampilkan jendela log terminal server"
+        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer whitespace-nowrap flex-shrink-0">
+        <img src="icons/terminal.png" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+        <span class="hidden md:inline">Log Terminal</span>
       </button>
 
-      <button id="btnHeaderBrowser" type="button" title="Buka dashboard ini di web browser eksternal (Chrome / Edge)"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer">
-        <img src="icons/computer.png" alt="" class="w-4 h-4 object-contain">
-        <span>Browser Luar</span>
+      <button id="btnHeaderBrowser" type="button" title="Browser Luar: Buka dashboard ini di web browser eksternal (Chrome / Edge)"
+        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition hover:border-slate-300 cursor-pointer whitespace-nowrap flex-shrink-0">
+        <img src="icons/computer.png" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+        <span class="hidden md:inline">Browser Luar</span>
       </button>
     </div>
   </header>
 
   <!-- Main Content Layout -->
-  <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1720px] mx-auto w-full">
+  <main class="flex-1 p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 max-w-[1720px] mx-auto w-full">
 
     <!-- LEFT COLUMN: Input & Controls (4 Cols) -->
     <div class="lg:col-span-4 space-y-5 flex flex-col">
